@@ -1,0 +1,163 @@
+CREATE DATABASE db_Faculdade ON PRIMARY
+(NAME = db_Faculdade,
+FILENAME = 'C:\SQL\Faculdade.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = db_Faculdade_log,
+FILENAME = 'C:\SQL\db_Faculdade_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+
+USE db_Faculdade;
+
+CREATE TABLE tbl_departamentos(
+cod_departamento SMALLINT PRIMARY KEY IDENTITY,
+nome_departamento VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE tbl_curso(
+cod_curso SMALLINT PRIMARY KEY IDENTITY,
+nome_curso VARCHAR(20) NOT NULL,
+cod_departamento SMALLINT NOT NULL,
+CONSTRAINT administra FOREIGN KEY(cod_departamento)
+	REFERENCES tbl_departamentos(cod_departamento)ON DELETE CASCADE);
+
+CREATE TABLE tbl_disciplina(
+cod_disciplina SMALLINT PRIMARY KEY IDENTITY,
+cod_disciplina_depende SMALLINT NULL,
+nome_disciplina VARCHAR (20),
+carga_horaria SMALLINT,
+descrição VARCHAR (50),
+num_alunos SMALLINT,
+cod_departamento SMALLINT NOT NULL,
+CONSTRAINT ministra FOREIGN KEY (cod_departamento)
+	REFERENCES tbl_departamentos(cod_departamento)ON DELETE CASCADE,
+CONSTRAINT depende FOREIGN KEY (cod_disciplina_depende)
+	REFERENCES tbl_disciplina(cod_disciplina)
+);
+
+CREATE TABLE tbl_curso_disciplina(
+cod_curso SMALLINT NOT NULL,
+cod_disciplina SMALLINT NOT NULL,
+CONSTRAINT chave_composta PRIMARY KEY (cod_curso,cod_disciplina),
+CONSTRAINT tem FOREIGN KEY (cod_curso)
+	REFERENCES tbl_curso(cod_curso),
+CONSTRAINT pertence FOREIGN KEY (cod_disciplina)
+	REFERENCES tbl_disciplina(cod_disciplina));
+
+CREATE TABLE tbl_professor(
+cod_professor SMALLINT PRIMARY KEY IDENTITY,
+nome_professor VARCHAR (20),
+sobrenome_professor VARCHAR (50),
+status_prof BIT not null,
+cod_departamento SMALLINT NOT NULL,
+CONSTRAINT contrata FOREIGN KEY (cod_departamento)
+	REFERENCES tbl_departamentos(cod_departamento));
+
+CREATE TABLE tbl_prof_disciplina(
+cod_professor SMALLINT NOT NULL,
+cod_disciplina SMALLINT NOT NULL,
+CONSTRAINT fk_composta PRIMARY KEY (cod_professor,cod_disciplina),
+CONSTRAINT ensina FOREIGN KEY (cod_professor)
+	REFERENCES tbl_professor(cod_professor),
+CONSTRAINT ensinada FOREIGN KEY (cod_disciplina)
+	REFERENCES tbl_disciplina(cod_disciplina));
+
+CREATE TABLE tbl_turma(
+cod_turma SMALLINT PRIMARY KEY IDENTITY,
+período VARCHAR (8),
+num_alunos SMALLINT NOT NULL,
+data_início DATE,
+data_fim DATE,
+cod_curso SMALLINT NOT NULL,
+CONSTRAINT obtem FOREIGN KEY (cod_curso)
+	REFERENCES tbl_curso(cod_curso));
+
+CREATE TABLE tbl_aluno(
+RA SMALLINT PRIMARY KEY IDENTITY,
+nome_aluno VARCHAR (20),
+sobrenome_aluno VARCHAR (20),
+CPF VARCHAR (11),
+status_aluno BIT,
+sexo VARCHAR (1),
+nome_pai VARCHAR (50),
+nome_mãe VARCHAR (50),
+email VARCHAR (50),
+whatsapp  VARCHAR (20),
+cod_turma SMALLINT NOT NULL,
+cod_curso SMALLINT NOT NULL,
+CONSTRAINT matricula FOREIGN KEY (cod_turma)
+	REFERENCES tbl_turma(cod_turma),
+CONSTRAINT faz FOREIGN KEY (cod_curso)
+	REFERENCES tbl_curso(cod_curso));
+
+CREATE TABLE tbl_aluno_disciplina(
+RA SMALLINT NOT NULL,
+cod_disciplina SMALLINT NOT NULL,
+CONSTRAINT fk_chave PRIMARY KEY (RA,cod_disciplina),
+CONSTRAINT estuda FOREIGN KEY (RA)
+	REFERENCES tbl_aluno(RA),
+CONSTRAINT estudada FOREIGN KEY (cod_disciplina)
+	REFERENCES tbl_disciplina(cod_disciplina));
+
+CREATE TABLE tbl_historico(
+cod_historico SMALLINT PRIMARY KEY IDENTITY,
+data_inicio DATE,
+data_final DATE,
+RA SMALLINT NOT NULL,
+CONSTRAINT pertencido FOREIGN KEY (RA)
+	REFERENCES tbl_aluno(RA));
+
+CREATE TABLE disc_hist(
+nota SMALLINT NOT NULL,
+frequencia SMALLINT NOT NULL,
+cod_historico SMALLINT NOT NULL,
+cod_disciplina SMALLINT NOT NULL,
+CONSTRAINT chave_fk PRIMARY KEY (cod_historico,cod_disciplina),
+CONSTRAINT acessa FOREIGN KEY (cod_historico)
+	REFERENCES tbl_historico(cod_historico),
+CONSTRAINT acessada FOREIGN KEY (cod_disciplina)
+	REFERENCES tbl_disciplina(cod_disciplina));
+
+CREATE TABLE tbl_telefone_aluno(
+cod_telefones_aluno SMALLINT PRIMARY KEY IDENTITY,
+num_telefone VARCHAR (20),
+RA SMALLINT NOT NULL,
+cod_tipo_telefone SMALLINT NOT NULL,
+CONSTRAINT ligado FOREIGN KEY (RA)
+	REFERENCES tbl_aluno(RA),
+CONSTRAINT tipo FOREIGN KEY (cod_tipo_telefone)
+	REFERENCES tbl_tipo_telefone(cod_tipo_telefone));
+
+CREATE TABLE tbl_tipo_telefone(
+cod_tipo_telefone SMALLINT PRIMARY KEY IDENTITY,
+tipo_telefone VARCHAR (8));
+
+CREATE TABLE tipo_logradouro(
+cod_tipo_logradouro SMALLINT PRIMARY KEY IDENTITY,
+tipo_logradouro VARCHAR(11));
+
+CREATE TABLE tbl_endereço_aluno(
+cod_endereco_aluno SMALLINT PRIMARY KEY IDENTITY,
+nome_rua VARCHAR (50),
+num_rua SMALLINT NOT NULL,
+complemento VARCHAR (20),
+CEP VARCHAR (8),
+RA SMALLINT NOT NULL,
+cod_tipo_logradouro SMALLINT NOT NULL,
+CONSTRAINT reside FOREIGN KEY (RA)
+	REFERENCES tbl_aluno(RA),
+CONSTRAINT complementa FOREIGN KEY (cod_tipo_logradouro)
+	REFERENCES tipo_logradouro(cod_tipo_logradouro));
+
+drop table tbl_disciplina;
+
+
+
+BACKUP DATABASE db_Faculdade
+TO DISK = 'C:\SQL\Faculdade.back';
+GO
