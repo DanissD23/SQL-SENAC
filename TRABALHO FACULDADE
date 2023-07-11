@@ -156,7 +156,58 @@ CONSTRAINT complementa FOREIGN KEY (cod_tipo_logradouro)
 
 drop table tbl_disciplina;
 
+INSERT INTO tbl_departamentos(nome_departamento)
+VALUES ('Professores'),('Alunos'),('Cursos');
 
+UPDATE tbl_departamentos
+SET nome_departamento = 'Disciplina'
+WHERE cod_departamento = 2;
+
+INSERT INTO tbl_professor(nome_professor,sobrenome_professor,status_prof,cod_departamento)
+VALUES ('Anakin','Skywalker',1,1);
+INSERT INTO tbl_professor(nome_professor,sobrenome_professor,status_prof,cod_departamento)
+VALUES('Mickey','Mouse',1,1),('Pato','Donald',1,1),('Sheev', 'Palpatine',1,1),('Obi-Wan','Kenobi',1,1);
+
+INSERT INTO tbl_curso(nome_curso,cod_departamento)
+VALUES ('Esgrima',3),('Cinema',3),('Marinha',3),('Alquimia',3),('Filosofia',3);
+
+INSERT INTO tbl_turma(período,num_alunos,data_início,data_fim,cod_curso)
+VALUES ('Diurno',5,'20230101','20230630',1),('Noturno',5,'20230101','20230630',2),('Diurno',5,'20230701','20231230',3),
+('Noturno',5,'20230701','20231230',4), ('Diurno',5,'20240101','20241230',5);
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES('Um Dois Tres','de Oliveira Quatro','123456789',1,'M','Umberto','Doisberta','123O4@email.com','11-9-2233-4455',1,1);
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES('Ahsoka','Tano','234567890',1,'F','Anakin','Bariss','ahsok432@jedi.com','11-9-8877-4411',1,1),('Luminara','Unduli','345678901',1,'F','Jabba','Bib','luluunduli@jedi.com','11-9-9966-3322',1,1),
+('Qui-Gon','Dinn','456789012',1,'M','Jonas','Maria','dinnqui12@jedi.com','11-9-5588-4422',1,1),('Cal','Kestis','567890123',1,'M','Kleber','Lauana','kestissurvivor@jedi.com','11-9-4433-9955',1,1);
+
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES ('Cere','Junda','67890123411',1,'F','Tobias','Janaina','cere@jedi.com','11-9-7744-8822',2,2),('Ezra','Bridger','54781269845',1,'M','Efraim','Myra','lothalcat@jedi.com','11-9-5471-8549',2,2),
+('Kanan','Jarrus','12421521214',1,'M','Nicolas','Marta','espectro01@jedi.com','11-9-5478-9669',2,2),('Caleb','Dume','54785444834',1,'M','Gustavo','Ursula','caleleb@jedi.com','11-9-5477-7339',2,2),
+('Hera','Syndulla','5445472122',1,'F','Chan','Kara','flyingtwilek@rebel.com','11-9-4578-9654',2,2);
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES ('Garazeb','Orelios','24847551486',1,'M','Yuri','Helena','lasan@rebel.com','11-9-5547-6634',3,3),('Sabine','Wren','54788523598',1,'F','Caique', 'Ursa','mandart@mando.com','11-9-5478-6632',3,3),
+('Quinlan','Vos','21458540145',1,'M','Mike','Milene','theway@jedi.com','11-9-8875-9965',3,3), ('Din','Djarin','23548964012',1,'M','Alan','Sarah','beskardad@mando.com','11-9-5201-9985',3,3),
+('Din','Grogu','12548639750',1,'M', 'Bruno', 'Lara','patu@jedi.com','11-9-5485-0021',3,3);
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES('Darth','Vader','22580036971',1,'M','Não consta',' Shmi','chosen@sith.com','11-9-5554-2002',4,4),('Conde','Dookan','22015489201',1,'M','Willian','Vitoria','conded@sith.com','11-9-5524-6652',4,4),
+('Mara','Jade','22015489632',1,'F','Jaime','Carol','purplesky@sith.com','11-9-5448,2310',4,4),('Savage','Opress','22584859021',1,'M','Hugo','Aline','bigbro@sith.com','11-9-2204-5558',4,4),
+('Asajj', 'Ventress','55842964587',1,'F','Pedro','Lilian','baldy@sith.com','11-9-5548-0015',4,4);
+
+INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
+VALUES('Wagner','Silva','01245851234',1,'M','Erick','Rafaela','wagnao@email.com','11-9-5445-0021',5,5),('Talita','Cardoso','20145875421',1,'F','Ygor','Ulma','tata123@email.com','11-9-5540-9696',5,5),
+('Icaro','Alencar','98475124482',1,'M','Oscar','Pamela','icks55@email.com','11-9-5448-7269',5,5),('Amanda','Santos','45874125978',1,'F','Sandro','Daniela','mandy@email.com','11-9-5447-2458',5,5),
+('Flavio','Marino','24857458102',1,'M','Gabriel','Helen','flavis@email.com','11-9-5478-5555',5,5)
+
+SELECT* FROM tbl_aluno;
+SELECT * FROM tbl_departamentos;
+SELECT * FROM tbl_professor;
+SELECT * FROM tbl_curso;
+SELECT * FROM tbl_turma;
 
 BACKUP DATABASE db_Faculdade
 TO DISK = 'C:\SQL\Faculdade.back';
