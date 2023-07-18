@@ -1,214 +1,442 @@
-CREATE DATABASE db_Faculdade ON PRIMARY
-(NAME = db_Faculdade,
-FILENAME = 'C:\SQL\Faculdade.mdf',
+-- criar um banco de dados Faculdade:
+CREATE DATABASE db_Faculdade ON PRIMARY (
+NAME = db_Faculdade,
+FILENAME = 'C:\SQL\db_Faculdade.mdf',
 SIZE = 6MB,
 MAXSIZE = 15MB,
-FILEGROWTH = 10%)
+FILEGROWTH = 10%
+)
 LOG ON (
 NAME = db_Faculdade_log,
-FILENAME = 'C:\SQL\db_Faculdade_log.ldf',
+FILENAME = 'C:\SQL\db_Faculdade_log.lf',
 SIZE = 1MB,
 FILEGROWTH = 1MB
 )
 GO
 
+-- selecionar o banco de dados a ser usado:
 USE db_Faculdade;
 
-CREATE TABLE tbl_departamentos(
-cod_departamento SMALLINT PRIMARY KEY IDENTITY,
-nome_departamento VARCHAR(20) NOT NULL
+-- criar tabela departamento
+CREATE TABLE tbl_Departamento (
+Cod_Departamento SMALLINT PRIMARY KEY IDENTITY,
+Nome_Departamento VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE tbl_curso(
-cod_curso SMALLINT PRIMARY KEY IDENTITY,
-nome_curso VARCHAR(20) NOT NULL,
-cod_departamento SMALLINT NOT NULL,
-CONSTRAINT administra FOREIGN KEY(cod_departamento)
-	REFERENCES tbl_departamentos(cod_departamento)ON DELETE CASCADE);
-
-CREATE TABLE tbl_disciplina(
-cod_disciplina SMALLINT PRIMARY KEY IDENTITY,
-cod_disciplina_depende SMALLINT NULL,
-nome_disciplina VARCHAR (20),
-carga_horaria SMALLINT,
-descrição VARCHAR (50),
-num_alunos SMALLINT,
-cod_departamento SMALLINT NOT NULL,
-CONSTRAINT ministra FOREIGN KEY (cod_departamento)
-	REFERENCES tbl_departamentos(cod_departamento)ON DELETE CASCADE,
-CONSTRAINT depende FOREIGN KEY (cod_disciplina_depende)
-	REFERENCES tbl_disciplina(cod_disciplina)
+-- criar tabela curso
+CREATE TABLE tbl_Curso (
+Cod_Curso SMALLINT PRIMARY KEY IDENTITY,
+Nome_Curso VARCHAR(20) NOT NULL,
+Cod_Departamento SMALLINT NOT NULL,
+CONSTRAINT administra FOREIGN KEY(Cod_Departamento) REFERENCES tbl_Departamento(Cod_Departamento) ON DELETE CASCADE
 );
 
-CREATE TABLE tbl_curso_disciplina(
-cod_curso SMALLINT NOT NULL,
-cod_disciplina SMALLINT NOT NULL,
-CONSTRAINT chave_composta PRIMARY KEY (cod_curso,cod_disciplina),
-CONSTRAINT tem FOREIGN KEY (cod_curso)
-	REFERENCES tbl_curso(cod_curso),
-CONSTRAINT pertence FOREIGN KEY (cod_disciplina)
-	REFERENCES tbl_disciplina(cod_disciplina));
+-- criar tabela disciplina
+CREATE TABLE tbl_Disciplina (
+Cod_Disciplina SMALLINT PRIMARY KEY IDENTITY,
+Cod_Disciplina_Depende SMALLINT NULL,
+Nome_Disciplina VARCHAR(20) NOT NULL,
+Carga_Horária SMALLINT NOT NULL,
+Descrição VARCHAR(50),
+Num_Alunos SMALLINT NOT NULL,
+Cod_Departamento SMALLINT NOT NULL,
+CONSTRAINT ministra FOREIGN KEY(Cod_Departamento) REFERENCES tbl_Departamento(Cod_Departamento) ON DELETE CASCADE,
+CONSTRAINT depende FOREIGN KEY(Cod_Disciplina_Depende) REFERENCES tbl_Disciplina(Cod_Disciplina)
+);
 
-CREATE TABLE tbl_professor(
-cod_professor SMALLINT PRIMARY KEY IDENTITY,
-nome_professor VARCHAR (20),
-sobrenome_professor VARCHAR (50),
-status_prof BIT not null,
-cod_departamento SMALLINT NOT NULL,
-CONSTRAINT contrata FOREIGN KEY (cod_departamento)
-	REFERENCES tbl_departamentos(cod_departamento));
+-- criar tabela curso_disciplina
+CREATE TABLE tbl_Curso_Disciplina (
+Cod_Curso SMALLINT NOT NULL,
+Cod_Disciplina SMALLINT NOT NULL,
+CONSTRAINT chave_composta PRIMARY KEY(Cod_Curso, Cod_Disciplina),
+CONSTRAINT tem FOREIGN KEY (Cod_Curso) REFERENCES tbl_Curso(Cod_Curso),
+CONSTRAINT pertence FOREIGN KEY (Cod_Disciplina) REFERENCES tbl_Disciplina(Cod_Disciplina)
+);
 
-CREATE TABLE tbl_prof_disciplina(
-cod_professor SMALLINT NOT NULL,
-cod_disciplina SMALLINT NOT NULL,
-CONSTRAINT fk_composta PRIMARY KEY (cod_professor,cod_disciplina),
-CONSTRAINT ensina FOREIGN KEY (cod_professor)
-	REFERENCES tbl_professor(cod_professor),
-CONSTRAINT ensinada FOREIGN KEY (cod_disciplina)
-	REFERENCES tbl_disciplina(cod_disciplina));
+-- criar tabela professor
+CREATE TABLE tbl_Professor (
+Cod_Professor SMALLINT PRIMARY KEY IDENTITY(101,1),
+Nome_Professor VARCHAR(20) NOT NULL,
+Sobrenome_Professor VARCHAR(50) NOT NULL,
+Status BIT NOT NULL,
+Cod_Departamento SMALLINT NOT NULL,
+CONSTRAINT contrata FOREIGN KEY (Cod_Departamento) REFERENCES tbl_Departamento(Cod_Departamento)
+);
 
-CREATE TABLE tbl_turma(
-cod_turma SMALLINT PRIMARY KEY IDENTITY,
-período VARCHAR (8),
-num_alunos SMALLINT NOT NULL,
-data_início DATE,
-data_fim DATE,
-cod_curso SMALLINT NOT NULL,
-CONSTRAINT obtem FOREIGN KEY (cod_curso)
-	REFERENCES tbl_curso(cod_curso));
+-- criar tabela professor_disciplina
+CREATE TABLE tbl_Prof_Disciplina (
+Cod_Professor SMALLINT NOT NULL,
+Cod_Disciplina SMALLINT NOT NULL,
+CONSTRAINT ensina FOREIGN KEY (Cod_Professor) REFERENCES tbl_Professor(Cod_Professor),
+CONSTRAINT ensinada FOREIGN KEY (Cod_Disciplina) REFERENCES tbl_Disciplina(Cod_Disciplina)
+);
 
-CREATE TABLE tbl_aluno(
-RA SMALLINT PRIMARY KEY IDENTITY,
-nome_aluno VARCHAR (20),
-sobrenome_aluno VARCHAR (20),
-CPF VARCHAR (11),
-status_aluno BIT,
-sexo VARCHAR (1),
-nome_pai VARCHAR (50),
-nome_mãe VARCHAR (50),
-email VARCHAR (50),
-whatsapp  VARCHAR (20),
-cod_turma SMALLINT NOT NULL,
-cod_curso SMALLINT NOT NULL,
-CONSTRAINT matricula FOREIGN KEY (cod_turma)
-	REFERENCES tbl_turma(cod_turma),
-CONSTRAINT faz FOREIGN KEY (cod_curso)
-	REFERENCES tbl_curso(cod_curso));
+-- criar tabela turma
+CREATE TABLE tbl_Turma (
+Cod_Turma SMALLINT PRIMARY KEY IDENTITY,
+Período VARCHAR(8),
+Num_Alunos SMALLINT NOT NULL,
+Data_Início DATE,
+Data_Fim DATE,
+Cod_Curso SMALLINT NOT NULL,
+CONSTRAINT obtem FOREIGN KEY(Cod_Curso) REFERENCES tbl_Curso(Cod_Curso)
+);
 
-CREATE TABLE tbl_aluno_disciplina(
+-- criar tabela aluno
+CREATE TABLE tbl_Aluno (
+RA SMALLINT PRIMARY KEY IDENTITY(1001,1),
+Nome_Aluno VARCHAR(20) NOT NULL,
+Sobrenome_Aluno VARCHAR(20) NOT NULL,
+CPF VARCHAR(11) NOT NULL,
+Status BIT,
+Sexo VARCHAR(1),
+Nome_Pai VARCHAR(50),
+Nome_Mãe VARCHAR(50),
+Email VARCHAR(50),
+Whatsapp VARCHAR(20),
+Cod_Turma SMALLINT NOT NULL,
+Cod_Curso SMALLINT NOT NULL,
+CONSTRAINT matricula FOREIGN KEY(Cod_Turma) REFERENCES tbl_Turma(Cod_Turma),
+CONSTRAINT faz FOREIGN KEY(Cod_Curso) REFERENCES tbl_Curso(Cod_Curso)
+);
+
+-- criar tabela aluno_disciplina
+CREATE TABLE tbl_Aluno_Disciplina (
 RA SMALLINT NOT NULL,
-cod_disciplina SMALLINT NOT NULL,
-CONSTRAINT fk_chave PRIMARY KEY (RA,cod_disciplina),
-CONSTRAINT estuda FOREIGN KEY (RA)
-	REFERENCES tbl_aluno(RA),
-CONSTRAINT estudada FOREIGN KEY (cod_disciplina)
-	REFERENCES tbl_disciplina(cod_disciplina));
+Cod_Disciplina SMALLINT NOT NULL,
+CONSTRAINT fk_chave PRIMARY KEY(RA, Cod_Disciplina),
+CONSTRAINT estuda FOREIGN KEY(RA) REFERENCES tbl_Aluno(RA),
+CONSTRAINT estudada FOREIGN KEY(Cod_Disciplina) REFERENCES tbl_Disciplina(Cod_Disciplina)
+);
 
-CREATE TABLE tbl_historico(
-cod_historico SMALLINT PRIMARY KEY IDENTITY,
-data_inicio DATE,
-data_final DATE,
+-- criar tabela historico
+CREATE TABLE tbl_Historico (
+Cod_Historico SMALLINT PRIMARY KEY IDENTITY,
+Data_Inicio DATE,
+Data_Final DATE,
 RA SMALLINT NOT NULL,
-CONSTRAINT pertencido FOREIGN KEY (RA)
-	REFERENCES tbl_aluno(RA));
+CONSTRAINT pertencido FOREIGN KEY(RA) REFERENCES tbl_aluno(RA)
+);
 
-CREATE TABLE disc_hist(
-nota SMALLINT NOT NULL,
-frequencia SMALLINT NOT NULL,
-cod_historico SMALLINT NOT NULL,
-cod_disciplina SMALLINT NOT NULL,
-CONSTRAINT chave_fk PRIMARY KEY (cod_historico,cod_disciplina),
-CONSTRAINT acessa FOREIGN KEY (cod_historico)
-	REFERENCES tbl_historico(cod_historico),
-CONSTRAINT acessada FOREIGN KEY (cod_disciplina)
-	REFERENCES tbl_disciplina(cod_disciplina));
+-- criar tabela disciplina_historico
+CREATE TABLE tbl_Disc_Hist (
+Nota SMALLINT NOT NULL,
+Frequencia SMALLINT NOT NULL,
+Cod_Historico SMALLINT NOT NULL,
+Cod_Disciplina SMALLINT NOT NULL,
+CONSTRAINT chave_fk PRIMARY KEY(Cod_Historico, Cod_disciplina),
+CONSTRAINT acessa FOREIGN KEY (Cod_historico) REFERENCES tbl_Historico(Cod_Historico),
+CONSTRAINT acessada FOREIGN KEY (Cod_disciplina) REFERENCES tbl_Disciplina(Cod_Disciplina)
+);
 
-CREATE TABLE tbl_telefone_aluno(
-cod_telefones_aluno SMALLINT PRIMARY KEY IDENTITY,
-num_telefone VARCHAR (20),
+-- criar tabela tipo_telefone
+CREATE TABLE tbl_Tipo_Telefone (
+Cod_Tipo_Telefone SMALLINT PRIMARY KEY IDENTITY,
+Tipo_Telefone VARCHAR(8)
+);
+
+-- criar tabela telefone_aluno
+CREATE TABLE tbl_Telefone_Aluno (
+Cod_Telefones_Aluno SMALLINT PRIMARY KEY IDENTITY,
+Num_Telefone VARCHAR(20),
 RA SMALLINT NOT NULL,
 cod_tipo_telefone SMALLINT NOT NULL,
-CONSTRAINT ligado FOREIGN KEY (RA)
-	REFERENCES tbl_aluno(RA),
-CONSTRAINT tipo FOREIGN KEY (cod_tipo_telefone)
-	REFERENCES tbl_tipo_telefone(cod_tipo_telefone));
+CONSTRAINT ligado FOREIGN KEY(RA) REFERENCES tbl_Aluno(RA),
+CONSTRAINT tipo FOREIGN KEY(Cod_Tipo_Telefone) REFERENCES tbl_Tipo_Telefone(Cod_Tipo_Telefone)
+);
 
-CREATE TABLE tbl_tipo_telefone(
-cod_tipo_telefone SMALLINT PRIMARY KEY IDENTITY,
-tipo_telefone VARCHAR (8));
+-- criar tabela tipo_logradouro
+CREATE TABLE tbl_Tipo_Logradouro (
+Cod_Tipo_Logradouro SMALLINT PRIMARY KEY IDENTITY,
+Tipo_Logradouro VARCHAR(11)
+);
 
-CREATE TABLE tipo_logradouro(
-cod_tipo_logradouro SMALLINT PRIMARY KEY IDENTITY,
-tipo_logradouro VARCHAR(11));
-
-CREATE TABLE tbl_endereço_aluno(
-cod_endereco_aluno SMALLINT PRIMARY KEY IDENTITY,
-nome_rua VARCHAR (50),
-num_rua SMALLINT NOT NULL,
-complemento VARCHAR (20),
-CEP VARCHAR (8),
+-- criar tabela endereço_aluno
+CREATE TABLE tbl_Endereço_Aluno (
+Cod_Endereco_Aluno SMALLINT PRIMARY KEY IDENTITY,
+Nome_Rua VARCHAR(50),
+Num_Rua SMALLINT NOT NULL,
+Complemento VARCHAR (20),
+CEP VARCHAR(8),
 RA SMALLINT NOT NULL,
-cod_tipo_logradouro SMALLINT NOT NULL,
-CONSTRAINT reside FOREIGN KEY (RA)
-	REFERENCES tbl_aluno(RA),
-CONSTRAINT complementa FOREIGN KEY (cod_tipo_logradouro)
-	REFERENCES tipo_logradouro(cod_tipo_logradouro));
+Cod_Tipo_Logradouro SMALLINT NOT NULL,
+CONSTRAINT reside FOREIGN KEY(RA) REFERENCES tbl_Aluno(RA),
+CONSTRAINT complementa FOREIGN KEY (Cod_Tipo_Logradouro) REFERENCES tbl_Tipo_Logradouro(Cod_Tipo_Logradouro)
+);
 
-drop table tbl_disciplina;
+-- inserir dados na tabela departamento
+INSERT INTO tbl_Departamento(Nome_Departamento)
+	VALUES ('Professor'), ('Curso'), ('Disciplina');
 
-INSERT INTO tbl_departamentos(nome_departamento)
-VALUES ('Professores'),('Alunos'),('Cursos');
+-- inserir dados na tabela curso
+INSERT INTO tbl_Curso(Nome_Curso, Cod_Departamento)
+	VALUES ('Biologia', 2), ('Quimica', 2), ('Zoologia', 2);
 
-UPDATE tbl_departamentos
-SET nome_departamento = 'Disciplina'
-WHERE cod_departamento = 2;
+-- inserir dados na tabela disciplina
+INSERT INTO tbl_Disciplina(Nome_Disciplina, Carga_Horária, Descrição, Num_Alunos, Cod_Departamento)
+	VALUES ('Células', 1200, 'Estudo das células', 1, 3), ('Anatomia', 420, 'Estudo da estrutura corporal', 1, 3),
+		('Elementos', 380, 'Estudo dos elementos da tabela periodica', 1, 3),
+		('Especies', 380, 'Estudo das especies de animais', 1, 3), ('Bioma', 120, 'Estudo dos biomas', 1, 3);
 
-INSERT INTO tbl_professor(nome_professor,sobrenome_professor,status_prof,cod_departamento)
-VALUES ('Anakin','Skywalker',1,1);
-INSERT INTO tbl_professor(nome_professor,sobrenome_professor,status_prof,cod_departamento)
-VALUES('Mickey','Mouse',1,1),('Pato','Donald',1,1),('Sheev', 'Palpatine',1,1),('Obi-Wan','Kenobi',1,1);
+-- update cod_disciplina_depende
+UPDATE tbl_Disciplina SET Cod_Disciplina_Depende = 5
+	WHERE Cod_Disciplina = 5;
 
-INSERT INTO tbl_curso(nome_curso,cod_departamento)
-VALUES ('Esgrima',3),('Cinema',3),('Marinha',3),('Alquimia',3),('Filosofia',3);
+-- inserir dados na tabela associativa curso_disciplina
+INSERT INTO tbl_Curso_Disciplina(Cod_Curso, Cod_Disciplina)
+	VALUES (1, 1), (1, 2),
+		(2, 3),
+		(3, 4), (3, 5);
 
-INSERT INTO tbl_turma(período,num_alunos,data_início,data_fim,cod_curso)
-VALUES ('Diurno',5,'20230101','20230630',1),('Noturno',5,'20230101','20230630',2),('Diurno',5,'20230701','20231230',3),
-('Noturno',5,'20230701','20231230',4), ('Diurno',5,'20240101','20241230',5);
+-- inserir dados na tabela professor
+INSERT INTO tbl_Professor(Nome_Professor, Sobrenome_Professor, Status, Cod_Departamento)
+	VALUES ('Anakin', 'Skywalker', 1, 1), ('Padme', 'Amidala', 0, 1),
+		('Mickey', 'Mouse', 1, 1),
+		('Minnie', 'Mouse', 1, 1), ('Pato', 'Donald', 1, 1);
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES('Um Dois Tres','de Oliveira Quatro','123456789',1,'M','Umberto','Doisberta','123O4@email.com','11-9-2233-4455',1,1);
+-- inserir dados na tabela associativa professor_disciplina
+INSERT INTO tbl_Prof_Disciplina(Cod_Disciplina, Cod_Professor)
+	VALUES (1, 101), (2, 102),
+		(3, 103),
+		(4, 104), (5, 105);
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES('Ahsoka','Tano','234567890',1,'F','Anakin','Bariss','ahsok432@jedi.com','11-9-8877-4411',1,1),('Luminara','Unduli','345678901',1,'F','Jabba','Bib','luluunduli@jedi.com','11-9-9966-3322',1,1),
-('Qui-Gon','Dinn','456789012',1,'M','Jonas','Maria','dinnqui12@jedi.com','11-9-5588-4422',1,1),('Cal','Kestis','567890123',1,'M','Kleber','Lauana','kestissurvivor@jedi.com','11-9-4433-9955',1,1);
+-- inserir dados na tabela turma
+INSERT INTO tbl_Turma(Período, Num_Alunos, Data_Início, Data_Fim, Cod_Curso)
+	VALUES ('Integral', 2, '20220820', '20231220', 1),
+		('Tarde', 1, '20230312', '20231015', 2),
+		('Manhã', 2, '20220820', '20231020', 3);
+
+-- inserir dados na tabela aluno
+INSERT INTO tbl_Aluno(Nome_Aluno, Sobrenome_Aluno, CPF, Status, Sexo, Nome_Pai, Nome_Mãe, Email, Whatsapp, Cod_Turma, Cod_Curso)
+	VALUES ('Luke', 'Skywalker', '503256589', 1, 'M', 'Anakin', 'Padme', 'transistorjedi@jedi.com', '11 95236-9874', 1, 1),
+		('Leia', 'Organa', '502589875', 0, 'F', 'Bail', 'Mira', 'senadorebelde@senado.com', '11 98562-6523', 1, 1),
+		('Rey', 'Skywalker', '505233691', 0, 'F', 'Sheev', 'N/A', 'scavenger@jedi.com', '13 98564-8523', 2, 2),
+		('Ben', 'Solo', '502583697', 1, 'M', 'Han', 'Leia', 'kylorem@sith.com', '23 96625-6698', 3, 3),
+		('Din', 'Grogu', '502548987', 1, 'M', 'Din', 'Bo Katan', 'patu@mando.com', '23 98745-5233', 3, 3);
+
+-- inserir dados na tabela associativa aluno_disciplina
+INSERT INTO tbl_Aluno_Disciplina(RA, Cod_Disciplina)
+	VALUES (1001, 1), (1002, 2), (1003, 3), (1004, 4), (1005, 5);
+
+-- inserir dados na tabela historico
+INSERT INTO tbl_Historico(Data_Inicio, Data_Final, RA)
+	VALUES ('20220820', '20231220', 1001), ('20230210', '20231220', 1002),
+		('20230312', '20231020', 1003),
+		('20220820', '20231020', 1004), ('20230413', '20231020', 1005);
+
+-- inserir dados na tabela associativa disciplina_historico
+INSERT INTO tbl_Disc_Hist(Nota, Frequencia, Cod_Historico, Cod_Disciplina)
+	VALUES (10, 100, 1, 1), (10, 80, 2, 2), (10, 100, 3, 3), (10, 100, 4, 4), (08, 100, 5, 5);
+
+-- inserir dados na tabela tipo_telefone
+INSERT INTO tbl_Tipo_Telefone(Tipo_Telefone)
+	VALUES ('Celular');
+
+-- inserir dados na tabela telefone_aluno
+INSERT INTO tbl_Telefone_Aluno(Num_Telefone, RA, cod_tipo_telefone)
+	VALUES ('11 95236-9874', 1001, 1), ('11 98562-6523', 1002, 1), ('13 98564-8523', 1003, 1), ('23 96625-6698', 1004, 1), ('23 98745-5233', 1005, 1);
+
+-- inserir dados na tabela tipo_logradouro(bairro)
+INSERT INTO tbl_Tipo_Logradouro(Tipo_Logradouro)
+	VALUES ('Faria Lima'), ('Paulista'), ('Liberdade'), ('Tucuruvi'), ('Santana');
+
+-- inserir dados na tabela endereço_aluno
+INSERT INTO tbl_Endereço_Aluno(Nome_Rua, Num_Rua, Complemento, CEP, RA, Cod_Tipo_Logradouro)
+	VALUES ('Av. Cidade Jardim', 400, 'Apt.103', '01454901', 1001, 1), ('Av. Paulista', 1578, 'Apt.32', '01310200', 1002, 2),
+		('Av. da Liberdade', 368, 'Casa 03', '01315010', 1003, 3),
+		('Av. Nova Cantareira', 2200, 'Casa', '02330003', 1004, 4), ('Rua Conselheiro Moreira de Barros', 2780, 'Casa', '02430001', 1005, 5);
 
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES ('Cere','Junda','67890123411',1,'F','Tobias','Janaina','cere@jedi.com','11-9-7744-8822',2,2),('Ezra','Bridger','54781269845',1,'M','Efraim','Myra','lothalcat@jedi.com','11-9-5471-8549',2,2),
-('Kanan','Jarrus','12421521214',1,'M','Nicolas','Marta','espectro01@jedi.com','11-9-5478-9669',2,2),('Caleb','Dume','54785444834',1,'M','Gustavo','Ursula','caleleb@jedi.com','11-9-5477-7339',2,2),
-('Hera','Syndulla','5445472122',1,'F','Chan','Kara','flyingtwilek@rebel.com','11-9-4578-9654',2,2);
+/* Consultar a realizar no banco de dados Faculdade 
+Crie códigos SQL para executar as consultas a seguir, realizadas no banco Faculdade: */
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES ('Garazeb','Orelios','24847551486',1,'M','Yuri','Helena','lasan@rebel.com','11-9-5547-6634',3,3),('Sabine','Wren','54788523598',1,'F','Caique', 'Ursa','mandart@mando.com','11-9-5478-6632',3,3),
-('Quinlan','Vos','21458540145',1,'M','Mike','Milene','theway@jedi.com','11-9-8875-9965',3,3), ('Din','Djarin','23548964012',1,'M','Alan','Sarah','beskardad@mando.com','11-9-5201-9985',3,3),
-('Din','Grogu','12548639750',1,'M', 'Bruno', 'Lara','patu@jedi.com','11-9-5485-0021',3,3);
+-- 1. Retornar nomes de alunos, cursos em que estão matriculados e suas turmas 
+SELECT a.Nome_Aluno, t.Cod_Turma, c.Nome_Curso FROM tbl_Aluno a
+	INNER JOIN tbl_Curso c
+		ON a.Cod_Curso = c.Cod_Curso
+	INNER JOIN tbl_Turma t
+		ON t.Cod_Curso = c.Cod_Curso;
+-- 2. Mostrar nomes dos professores e disciplinas que ministram 
+SELECT p.Nome_Professor, d.Nome_Disciplina FROM tbl_Professor p
+	INNER JOIN tbl_Prof_Disciplina pd
+		ON p.Cod_Professor = pd.Cod_Professor
+	INNER JOIN tbl_Disciplina d
+		ON d.Cod_Disciplina = pd.Cod_Disciplina;
+-- 3. Mostrar todos os dados dos alunos, incluindo telefone e endereço completo. 
+SELECT a.*, ta.Num_Telefone, ea.Nome_Rua, ea.Num_Rua, ea.Complemento, ea.CEP FROM tbl_Aluno a 
+	INNER JOIN tbl_Telefone_Aluno ta
+		ON a.RA = ta.RA
+	INNER JOIN tbl_Endereço_Aluno ea
+		ON a.RA = ea.RA;
+-- 4. Exibir o histórico dos alunos, com os nome das disciplinas cursadas, suas notas e frequência. 
+SELECT a.Nome_Aluno, d.Nome_Disciplina, dh.Nota, dh.Frequencia, h.Data_Inicio, h.Data_Final FROM tbl_Aluno a
+	INNER JOIN tbl_Historico h
+		ON a.RA = h.RA
+	INNER JOIN tbl_Disc_Hist dh
+		ON h.Cod_Historico = dh.Cod_Historico
+	INNER JOIN tbl_Disciplina d
+		ON dh.Cod_Disciplina= d.Cod_Disciplina;
+-- 5. Mostrar os cursos oferecidos pela faculdade, com as disciplinas que os compõem. 
+SELECT c.Nome_Curso, d.Nome_Disciplina FROM tbl_Curso c
+	INNER JOIN tbl_Curso_Disciplina cd
+		ON c.Cod_Curso = cd.Cod_Curso
+	INNER JOIN tbl_Disciplina d
+		ON cd.Cod_Disciplina = d.Cod_Disciplina;
+-- 6. Exibir os departamentos, seus professores e cursos associados. 
+SELECT d.Nome_Departamento, p.Nome_Professor, c.Nome_Curso FROM tbl_Professor p
+	INNER JOIN tbl_Departamento d
+		ON d.Cod_Departamento = p.Cod_Departamento
+	INNER JOIN tbl_Prof_Disciplina pd
+		ON p.Cod_Professor = pd.Cod_Professor
+	INNER JOIN tbl_Curso_Disciplina cd
+		ON pd.Cod_Disciplina = cd.Cod_Disciplina
+	INNER JOIN tbl_Curso c
+		ON c.Cod_Curso = cd.Cod_Curso;
+-- 7. Retornar todos os professores que não estão alocados em nenhuma disciplina no momento. 
+SELECT * FROM tbl_Professor WHERE Cod_Professor NOT IN (
+	SELECT Cod_Professor FROM tbl_Prof_Disciplina
+);
+-- 8. A partir do código de uma disciplina fornecido, mostrar os nomes, sobrenomes e CPFs dos alunos matriculados nela. 
+SELECT a.Nome_Aluno, a.Sobrenome_Aluno, a.CPF FROM tbl_Aluno a
+	INNER JOIN tbl_Aluno_Disciplina ad
+		ON a.RA = ad.RA
+WHERE ad.Cod_Disciplina = 4;
+-- 9. Exibir a lista de alunos matriculados em um curso, a partir do código do curso, em ordem alfabética de sobrenome de aluno. 
+SELECT a.Nome_Aluno, a.Sobrenome_Aluno FROM tbl_Aluno a
+	INNER JOIN tbl_Curso c
+		ON a.Cod_Curso = c.Cod_Curso
+WHERE a.Cod_Curso = 1 ORDER BY a.Sobrenome_Aluno;
+-- 10. Consultando o RA de um aluno, mostrar os nomes e sobrenomes de seus professores.
+SELECT p.Nome_Professor, p.Sobrenome_Professor FROM tbl_Professor p
+	INNER JOIN tbl_Prof_Disciplina pd
+		ON p.Cod_Professor = pd.Cod_Professor
+	INNER JOIN tbl_Disciplina d
+		ON pd.Cod_Disciplina = d.Cod_Disciplina
+	INNER JOIN tbl_Aluno_Disciplina ad
+		ON d.Cod_Disciplina = ad.Cod_Disciplina
+	INNER JOIN tbl_Aluno a
+		ON ad.RA = a.RA
+WHERE a.RA = 1001;
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES('Darth','Vader','22580036971',1,'M','Não consta',' Shmi','chosen@sith.com','11-9-5554-2002',4,4),('Conde','Dookan','22015489201',1,'M','Willian','Vitoria','conded@sith.com','11-9-5524-6652',4,4),
-('Mara','Jade','22015489632',1,'F','Jaime','Carol','purplesky@sith.com','11-9-5448,2310',4,4),('Savage','Opress','22584859021',1,'M','Hugo','Aline','bigbro@sith.com','11-9-2204-5558',4,4),
-('Asajj', 'Ventress','55842964587',1,'F','Pedro','Lilian','baldy@sith.com','11-9-5548-0015',4,4);
+-- Exercicio
+INSERT INTO tbl_Professor(Nome_Professor, Sobrenome_Professor, Status, Cod_Departamento)
+VALUES ('Umberto', 'Doisberto',1,1);
 
-INSERT INTO tbl_aluno(nome_aluno,sobrenome_aluno,CPF,status_aluno,sexo,nome_pai,nome_mãe,email,whatsapp,cod_turma,cod_curso)
-VALUES('Wagner','Silva','01245851234',1,'M','Erick','Rafaela','wagnao@email.com','11-9-5445-0021',5,5),('Talita','Cardoso','20145875421',1,'F','Ygor','Ulma','tata123@email.com','11-9-5540-9696',5,5),
-('Icaro','Alencar','98475124482',1,'M','Oscar','Pamela','icks55@email.com','11-9-5448-7269',5,5),('Amanda','Santos','45874125978',1,'F','Sandro','Daniela','mandy@email.com','11-9-5447-2458',5,5),
-('Flavio','Marino','24857458102',1,'M','Gabriel','Helen','flavis@email.com','11-9-5478-5555',5,5)
+INSERT INTO tbl_Curso(Nome_Curso, Cod_Departamento)
+VALUES ('Astronomia',2);
 
-SELECT* FROM tbl_aluno;
-SELECT * FROM tbl_departamentos;
-SELECT * FROM tbl_professor;
-SELECT * FROM tbl_curso;
-SELECT * FROM tbl_turma;
+INSERT INTO tbl_Disciplina(Nome_Disciplina, Carga_Horária, Descrição, Num_Alunos, Cod_Departamento)
+VALUES('Astrofísica',72,'estudar os astros',3,3),('Cosmologia', 72, 'Est. da criação da ordem do universo',3, 3),
+('Mecânica Celeste', 72, 'Est. movimento do corpos',3, 3),
+('Geofísica',72, 'Propriedades da físicas',3, 3),
+('Etnoastronomia', 72, 'Sociedades do universo',3, 3);
 
+INSERT INTO tbl_Turma (Período, Num_Alunos, Data_Início, Data_Fim, Cod_curso)
+VALUES ('Diurno', 3, '20230214', '20240214', 4);
+
+INSERT INTO tbl_Aluno(Nome_Aluno, Sobrenome_Aluno, CPF, Status, Sexo, Nome_Pai, Nome_Mãe, Email, Whatsapp, Cod_Turma, Cod_Curso)
+VALUES('Tresberto','Quatroberto','24542466021',1,'M','Cincoberto','Seisberta','nomenumero@gmail.com','11988478500',6,4),
+('Seteberto','Oitoberto','10124854754',1,'M','Noveberto','Dezberta','numberlover@gmail.com','11984758245',6,4),
+('Um Dois Tres', 'de Oliveira Quatro','44857125964',1,'M','Dadname','Mothername','fourliver@gmail.com','11944875129',6,4);
+
+INSERT INTO tbl_Tipo_Logradouro(Tipo_Logradouro)
+VALUES
+('Cotia'),('Santana'),('Jabaquara');
+
+INSERT INTO tbl_Endereço_Aluno (RA,Cod_Tipo_Logradouro,Nome_Rua,Num_Rua,Complemento,CEP)
+VALUES
+-- COTIA
+(1006,6,'Jardim Campos',258,'Sem Compl.','08151560'),
+
+-- SANTANA
+(1007,7,'Rua Pátria',1732,'Sem Compl.','02010500'),
+
+-- JABAQUARA
+(1008,8,'Rua Jabaquara,Tremembé',2369,'Sem Compl.','02378045');	
+
+
+INSERT INTO tbl_Telefone_Aluno (RA,Cod_Tipo_Telefone,Num_Telefone)
+VALUES
+(1006,1,'11996358745'),
+(1007,1,'11936568695'),
+(1008,1,'11947855874');
+
+INSERT INTO tbl_Historico(RA, Data_Inicio, Data_Final)
+VALUES
+(1006,'20230214','20240214'),
+(1007,'20230214','20240214'),
+(1008,'20230214','20240214');
+
+UPDATE tbl_Disciplina
+SET Cod_Disciplina_Depende = 10 
+WHERE Cod_Disciplina = 11;
+
+INSERT INTO tbl_Curso_Disciplina (Cod_Curso,Cod_Disciplina)
+VALUES
+(4,7),(4,8),(4,9),(4,10),(4,11);
+
+INSERT INTO tbl_Prof_Disciplina (Cod_Professor,Cod_Disciplina)
+VALUES
+(106,7),(106,8),(106,9),(106,10),(106,11);
+
+INSERT INTO tbl_Disc_Hist(Cod_Historico,Cod_Disciplina,Nota,Frequencia)
+VALUES
+(6,7,10,100),(6,8,10,100),(6,9,10,100),(6,10,10,100),(6,11,10,100),
+(7,7,10,100),(7,8,10,100),(7,9,10,100),(7,10,10,100),(7,11,10,100),
+(8,7,10,100),(8,8,10,100),(8,9,10,100),(8,10,10,100),(8,11,10,100);
+
+INSERT INTO tbl_Aluno_Disciplina (Cod_Disciplina,RA)
+VALUES
+(7,1006),(8,1006),(9,1006),(10,1006),(11,1006),
+(7,1007),(8,1007),(9,1007),(10,1007),(11,1007),
+(7,1008),(8,1008),(9,1008),(10,1008),(11,1008);
+
+--Exercicio
+-- 1. Altere o nome da disciplina Geofísica para Ciência Planetária
+UPDATE tbl_Disciplina
+SET Nome_Disciplina= 'Ciência Planetária'
+WHERE Cod_Disciplina = 10;
+
+-- 2. Acrescente a disciplina Astrobiologia ao curso de Astronomia
+INSERT INTO tbl_Professor(Nome_Professor, Sobrenome_Professor, Status, Cod_Departamento)
+VALUES('Firstname','Lastname',1,1);
+
+INSERT INTO tbl_Disciplina(Nome_Disciplina, Carga_Horária, Descrição, Num_Alunos, Cod_Departamento)
+VALUES('Astrobiologia',72,'Estudo da vida do universo',3,3);
+
+/*3. Cadastre o professor Stephen Hawking como professor das disciplinas Cosmologia e Mecânica Celeste, 
+e o professor Marcelo Gleiser como professor de Astrofísica, Cosmologia e Etnoastronomia.*/
+INSERT INTO tbl_Professor(Nome_Professor, Sobrenome_Professor, Status, Cod_Departamento)
+VALUES('Stephen','Hawking',1,1),('Marcelo','Gleiser',1,1);
+
+UPDATE tbl_Disciplina
+SET Cod_Disciplina_Depende = 12 
+WHERE Cod_Disciplina = 12;
+
+INSERT INTO tbl_Prof_Disciplina(Cod_Disciplina, Cod_Professor)
+VALUES(8,109);
+
+UPDATE tbl_Prof_Disciplina
+set Cod_Professor = 109
+WHERE Cod_Disciplina = 11;
+
+--4.Faça backup do banco de dados completo.
 BACKUP DATABASE db_Faculdade
-TO DISK = 'C:\SQL\Faculdade.back';
+TO DISK = 'C:\SQL\db_Faculdade.bak';
 GO
+
+SELECT * FROM tbl_Departamento;
+SELECT * FROM tbl_Curso;
+SELECT * FROM tbl_Disciplina;
+SELECT * FROM tbl_Curso_Disciplina;
+SELECT * FROM tbl_Professor;
+SELECT * FROM tbl_Prof_Disciplina;
+SELECT * FROM tbl_Turma;
+SELECT * FROM tbl_Aluno;
+SELECT * FROM tbl_Aluno_Disciplina;
+SELECT * FROM tbl_Historico;
+SELECT * FROM tbl_Disc_Hist;
+SELECT * FROM tbl_Tipo_Telefone;
+SELECT * FROM tbl_Telefone_Aluno;
+SELECT * FROM tbl_Tipo_Logradouro;
+SELECT * FROM tbl_Endereço_Aluno;
