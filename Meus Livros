@@ -715,6 +715,25 @@ PRINT 'Registro excluido com sucesso!';
 DELETE FROM tbl_editoras
 WHERE IdEditora = 18;
 
+/*ALTER TABLE nome_tabela
+ENABLE/DISABLE TRIGGER nome_trigger */
+--Testando desabilitando
+ALTER TABLE tbl_editoras
+DISABLE TRIGGER tirgger_editora_autor;
+--Testando habilitando
+ALTER TABLE tbl_editoras
+ENABLE TRIGGER tirgger_editora_autor;
+
+/* VERFICANDO A EXISTENCIA DE TRIGGER:
+Em uma tabela especifica:
+EXEC sp_helptrigger @tabname=Nome_Tabela
+Exemplo:
+EXEC sp_helptrigger @tabname=tbl_editoras;
+No banco de dado atual todo:*/
+EXEC sp_helptrigger @tabname=tbl_editoras;
+SELECT * FROM sys.triggers
+WHERE is_disabled = 0 OR is_disabled = 1;
+
 -- Verificar se dado foi inserido com sucesso:
 SELECT * FROM tbl_Assuntos;
 SELECT * FROM tbl_autores;
