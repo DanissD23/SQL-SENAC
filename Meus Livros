@@ -734,6 +734,31 @@ EXEC sp_helptrigger @tabname=tbl_editoras;
 SELECT * FROM sys.triggers
 WHERE is_disabled = 0 OR is_disabled = 1;
 
+-- Operador IN
+SELECT * FROM tbl_livros
+WHERE IdEditora IN (1,2,5);
+
+SELECT L.NomeLivro, A.NomeAssunto
+FROM tbl_livros L JOIN tbl_Assuntos A
+ON L.IdAssunto = A.IdAssunto
+WHERE A.NomeAssunto IN ('Ficção Científica', 'Eletrônica', 'Negócios');
+
+-- Exemplo NOT IN
+SELECT NomeLivro, DataPub, IdEditora
+FROM tbl_livros
+WHERE IdEditora NOT IN (2,4);
+
+--Exercicio
+SELECT L.NomeLivro, A.NomeAutor
+FROM tbl_livros L
+	INNER JOIN tbl_livros_autores LA
+	ON L.IdLivro = LA.IdLivro
+	INNER JOIN tbl_autores A
+	ON A.IdAutor = LA.IdAutor
+	INNER JOIN tbl_editoras E
+	ON L.IdEditora = E.IdEditora
+WHERE E.NomeEditora IN ('Wiley', 'Microsoft Press','Bookman');
+
 -- Verificar se dado foi inserido com sucesso:
 SELECT * FROM tbl_Assuntos;
 SELECT * FROM tbl_autores;
