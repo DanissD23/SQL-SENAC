@@ -425,6 +425,15 @@ BACKUP DATABASE db_Faculdade
 TO DISK = 'C:\SQL\db_Faculdade.bak';
 GO
 
+CREATE TRIGGER tirgger_novos_profs
+ON tbl_Disciplina
+AFTER INSERT
+AS
+INSERT INTO tbl_Professor VALUES ('Linus','Pauling',1,1),('Michael','Faraday',1,1);
+
+INSERT INTO tbl_Disciplina
+VALUES (13,'Química Orgânica',72,'Estudo dos elementos organicos',1,3);
+
 SELECT * FROM tbl_Departamento;
 SELECT * FROM tbl_Curso;
 SELECT * FROM tbl_Disciplina;
