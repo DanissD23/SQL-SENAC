@@ -1,0 +1,65 @@
+CREATE DATABASE db_Administrativo ON PRIMARY
+(NAME = db_MeusLivros,
+FILENAME = 'C:\SQL\db_Administrativo.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = db_Administrativo_log,
+FILENAME = 'C:\SQL\db_Administrativo_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+
+USE db_Administrativo;
+
+CREATE TABLE tbl_responsavel(
+id_responsavel SMALLINT PRIMARY KEY IDENTITY,
+nome_responsavel VARCHAR (20) NOT NULL,
+função VARCHAR (30) NOT NULL,
+email VARCHAR (50) NOT NULL
+);
+drop table tbl_tarefas;
+
+CREATE TABLE tbl_tarefas(
+cod_tarefa SMALLINT PRIMARY KEY IDENTITY,
+nome_tarefa VARCHAR (60) NOT NULL,
+descrição_tarefa VARCHAR (100) NOT NULL,
+dt_inicio DATE,
+dt_final DATE,
+STATUS VARCHAR (60) NOT NULL
+);
+
+CREATE TABLE tbl_resp_tarefa(
+id_responsavel SMALLINT NOT NULL,
+cod_tarefa SMALLINT NOT NULL,
+CONSTRAINT chave_composta PRIMARY KEY(id_responsavel,cod_tarefa),
+CONSTRAINT administra FOREIGN KEY (id_responsavel) REFERENCES tbl_responsavel(id_responsavel),
+CONSTRAINT administrado FOREIGN KEY (cod_tarefa) REFERENCES tbl_tarefas (cod_tarefa)
+);
+drop table tbl_resp_tarefa;
+
+INSERT INTO tbl_tarefas
+	VALUES ('Banco de dados SQL','Criar os bancos de dados','20230110','20231215','Em andamento'),
+	('Progamação em Python','Criar os codigos em Python','20230501','20230922','Em andamento'),
+	('C Sharp', 'Criar codigos em C Sharp','20230125','20230510','Concluido'),
+	('Dicionario DB','Criar o dicionario do banco de dados','20230210','20230620','Atrasado'),
+	('Br modelo', 'Criação de diagramas MER e DER','20230210','20230620','Atrasado');
+
+INSERT INTO tbl_responsavel
+	VALUES ('Chaves del Ocho','Programador','elpiripaque@vila.com.me'),
+	('Quico Tesouro','Desenvolvedor','pelotaquadrada@vila.com.me'),
+	('Chiquinha Madruga','Modelador','poisepoise@vila.com.me'),
+	('Seu Madruga','Programador','honesto@vila.com.me'),
+	('Seu Barriga','Backend','discovoador@vila.com.me');
+
+UPDATE tbl_tarefas SET STATUS = 'Concluido'
+WHERE cod_tarefa = 5;
+
+BACKUP DATABASE db_Administrativo
+TO DISK = 'C:\SQL\db_Administrativo.bak';
+GO
+
+SELECT * FROM tbl_tarefas;
+SELECT * FROM tbl_responsavel;
