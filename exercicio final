@@ -61,5 +61,19 @@ BACKUP DATABASE db_Administrativo
 TO DISK = 'C:\SQL\db_Administrativo.bak';
 GO
 
+INSERT INTO tbl_resp_tarefa
+	VALUES
+	(6,2),(6,3),(7,1),(8,4),(8,5),
+	(7,4),(9,2),(10,1);
+
 SELECT * FROM tbl_tarefas;
 SELECT * FROM tbl_responsavel;
+SELECT * FROM tbl_resp_tarefa;
+SELECT nome_tarefa FROM tbl_tarefas;
+SELECT nome_tarefa FROM tbl_tarefas where STATUS = 'Em andamento';
+SELECT nome_tarefa FROM tbl_tarefas where STATUS = 'Concluido';
+SELECT R.nome_responsavel, R.função, T.nome_tarefa, T.descrição_tarefa FROM tbl_tarefas T
+	INNER JOIN tbl_resp_tarefa RT ON T.cod_tarefa = RT.cod_tarefa
+	INNER JOIN tbl_responsavel R ON RT.id_responsavel = R.id_responsavel
+WHERE R.id_responsavel = 6;
+SELECT nome_tarefa FROM tbl_tarefas where STATUS = 'Vencido';
