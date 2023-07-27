@@ -1,0 +1,61 @@
+CREATE DATABASE db_Deck ON PRIMARY
+(NAME = db_Deck,
+FILENAME = 'C:\SQL\db_Deck.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = db_Deck_log,
+FILENAME = 'C:\SQL\db_Deck_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+USE db_Deck
+CREATE TABLE tbl_Deck (
+CodCard SMALLINT PRIMARY KEY IDENTITY,
+NomeCard VARCHAR(50) NOT NULL,
+ManaCard SMALLINT NOT NULL,
+PoderCard SMALLINT NOT NULL,
+EscudCard SMALLINT NOT NULL,
+TypeCard VARCHAR(50) NOT NULL,
+QtdCard SMALLINT NOT NULL
+);
+
+DROP TABLE tbl_Deck
+
+INSERT INTO tbl_Deck(NomeCard,ManaCard,PoderCard,EscudCard,TypeCard,QtdCard)
+VALUES
+('Comet Missile',2,0000,0,'Spell/SB',3),('Skeeter Swarmer',2,4000,0,'Blocker',3),('Lux',2,1500,1,'Mana Booster',3),('Prototype Gunship',3,3000,0,'Blocker',3),('Kenina',4,2000,1,'Mana Booster',3),
+('Major Ao',5,4500,1,'Blcoker/Fast Attack',1),('Sinister Scheme',6,0000,0,'Spell/SB',3),('Terror Pit',7,0000,0,'Spell',3),('Hydrus the Oathbound',7,6500,2,'Blocker/Power Up',3),('Hammerdragon Fullbyrn',7,6000,2,'Caller',3),
+('Hyperspeed Dragon',5,5000,1,'Fast Attack Giver',3),('Herald of Infernus',5,5000,1,'Caller',3),('Flame Serpent',5,4000,2,'Power Up/ Unblock Giver',2),('Stormspark Blast',6,0000,0,'Spell/SB',3),('Krogon Blazing Devastation',8,9000,2,'Target Giver',3),
+('Issyl of the Frozen Wastes',8,11000,2,'Tap Locker',2),('Napalmeon the Conquering',9,12000,3,'Power Up/Race Locker',3),('Infernus the Aweakening',9,13000,3,'Level Banisher/Level Locker',1),
+('Herectic Prince Var-Rakka',8,9000,2,'Fast Attack Giver/Jumper',1),('Bottle of Wishes',5,0000,0,'Spell/SB/Limited',1),('Grip of Despair',5,0000,0,'Spell/SB',3),('Infernus the Immolator',11,17000,3,'Power banniment/Power Up/Counter Target',3);
+
+SELECT NomeCard AS Carta, ManaCard AS Mana, PoderCard AS Poder,TypeCard AS Tipo, QtdCard AS Quantidade
+FROM tbl_Deck
+ORDER BY Mana;
+
+CREATE TABLE tbl_Deck2 (
+CodCard SMALLINT PRIMARY KEY IDENTITY,
+NomeCard VARCHAR(50) NOT NULL,
+ManaCard SMALLINT NOT NULL,
+PoderCard SMALLINT NOT NULL,
+EscudCard SMALLINT NOT NULL,
+TypeCard VARCHAR(50) NOT NULL,
+QtdCard SMALLINT NOT NULL
+);
+INSERT INTO tbl_Deck2(NomeCard,ManaCard,PoderCard,EscudCard,TypeCard,QtdCard)
+VALUES
+('Blaze Belcher',1,1000,1,'Forced Attack',3),('Comet Missile',2,0000,0,'Spell/SB',3),('Drakon Weaponsmith',2,1000,1,'Power Up',3),('Relentless Vanguard',2,3000,1,'Forced Attack',3),
+('Wildfire Valkyrie',3,3000,1,'Fast Attack/Jumper',3),('Furywing Trooper',3,6000,2,'Vortex/Power Up/Add Shield',3),('Gilaflame the Assaulter',4,5000,1,'Fast Attack/Jumper',3),
+('Drakon Warchief',4,3000,1,'Power up/Gain Fast Attack',1),('Draglide the Swifest',4,2000,1,'Fast Attack',3),('Shock Troop',4,2000,1,'Fast Attack',3),
+('Dropship Commando',5,6000,2,'Evolution/Power Banisher',3),('Tornado Flame',5,0000,0,'Spell/SB',3),('Rescale Drakon',5,2000,1,'Power Up/Fast Attack',2),('Blaze Helix',6,0000,0,'Spell',1),
+('Bolgash Dragon',6,6000,2,'Type Banisher',1),('Meteor Dragon',7,6000,2,'Power Up',2);
+
+SELECT NomeCard AS Carta, ManaCard AS Mana, PoderCard AS Poder,TypeCard AS Tipo, QtdCard AS Quantidade
+FROM tbl_Deck2
+ORDER BY Mana;
+
+SELECT * FROM tbl_Deck;
+SELECT * FROM tbl_Deck2;
