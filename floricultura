@@ -1,0 +1,124 @@
+CREATE DATABASE Floricultura_Florisbela ON PRIMARY
+(NAME = db_Floricultura_Florisbela,
+FILENAME = 'C:\SQL\Floricultura_Florisbela.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = db_Floricultura_Florisbela_log,
+FILENAME = 'C:\SQL\db_Floricultura_Florisbela_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+
+USE Floricultura_Florisbela;
+
+CREATE TABLE tbl_Cliente(
+IdCliente SMALLINT PRIMARY KEY IDENTITY,
+Nomecl VARCHAR(50) NOT NULL,
+Sobrenomecl VARCHAR (50) NOT NULL,
+Bairrocl VARCHAR(50) NOT NULL,
+CEPcl VARCHAR (10) NOT NULL,
+CidadeCl VARCHAR (50) NOT NULL,
+Ruacl VARCHAR (50) NOT NULL,
+TelefoneCl VARCHAR (11) NOT NULL,
+RGcl VARCHAR (10) NOT NULL);
+
+DROP TABLE tbl_Cliente;
+
+CREATE TABLE tbl_Produto(
+IdProduto SMALLINT PRIMARY KEY IDENTITY,
+NomePrd VARCHAR (10) NOT NULL,
+EstoquePrd SMALLINT NOT NULL,
+PrecoPrd MONEY,
+TipoPrd VARCHAR (100) NOT NULL);
+
+CREATE TABLE tbl_Compra(
+IdCompra SMALLINT PRIMARY KEY IDENTITY,
+QtdComprado SMALLINT NOT NULL,
+DataCmp DATE,
+NFCmp VARCHAR (9) NOT NULL,
+ProdutoCmp VARCHAR (100) NOT NULL,
+IdCliente SMALLINT NOT NULL,
+IdProduto SMALLINT NOT NULL,
+CONSTRAINT realiza FOREIGN KEY(IdCliente)
+	REFERENCES tbl_Cliente(IdCliente)ON DELETE CASCADE,
+CONSTRAINT fornece FOREIGN KEY(IdProduto)
+	REFERENCES tbl_Produto(IdProduto)ON DELETE CASCADE
+);
+DROP TABLE tbl_Compra;
+
+INSERT INTO tbl_Cliente(Nomecl,Sobrenomecl,Bairrocl,CEPcl,CidadeCl,Ruacl,TelefoneCl,RGcl)
+VALUES ('Nicolas','Silva', 'Vila Prudente', '03335-696','São Paulo','Rua Roseira 11', '112596-8873','852456987'),
+('Mickey','Mouse','Main','12345-678','Orlando','Mainstreet U.S.A. 1971','117539-9514','741236985'),('Anakin','Skywalker','Mar de dunas','86547-552','Tatooine','Beco Hutt 2','218854-7745','458241684'),
+('Pato','Donald','Echo','55864-887','Orlando','Echo Lake 565','148894-7523','3322214105'),('Buzz','Lightyear','Andys Room','11311-850','Andys House','Andys Box 113','218745-1496','854758216'),
+('Pateta','Goofy','Nature','87474-854', 'Orlando','World Nature 33','124752-4587','547584587'),('Goku','Kakaroto','Liberdade','52148-545','São Paulo','Sogo Plaza 1232', '118854-7587','877451248'),
+('Minnie','Mouse','Island','84759-547','Orlando','Discovery Island 54','458547-5521','457845856'),('Darth','Vader','Mustafar','00145-584','Orla Interior','Estrela da Morte 4','885247-8965','547859654'),
+('Stitch','Seisdoisseis','Tomorrowland','19716-265','Orlando','Magic Kingdom 626','222548-9654','547851248');
+
+INSERT INTO tbl_Produto(NomePrd,EstoquePrd,PrecoPrd,TipoPrd)
+VALUES('Rosa',10,20.50,'Flor'),('Margarida',10,15.00,'Flor'),('Orquidea',10,12.80,'Flor'),('Girassol',10,18.00,'Flor'),
+('Bambu',10,32.00,'Planta'),('Samambaia',10,20.00,'Planta'),('Cacto',10,12.30,'Planta'),
+('Plastico',10,20.00,'Vaso'),('Cerâmica',10,52.00,'Vaso'),('Coroa',10,87.90,'Arranjo');
+
+INSERT INTO tbl_Compra(QtdComprado,DataCmp,NFCmp,ProdutoCmp,IdCliente,IdProduto)
+VALUES (2,'20230112','854765921','Rosa',2,9),(3,'20230105','854785214','Orquidea',4,11),(5,'20230216','854693254','Margarida',5,10),
+(3,'20230219','774582115','Girassol',3,12),(2,'20230318','552482361','Bambu',6,13),(1,'20230322','554875543','Samambaia',7,14),
+(2,'20230411','774585478','Cacto',8,15),(1,'20230430','885475812','Vaso de Plástico',9,16),(1,'20230506','547851259','Vaso de Cerâmica',11,17),
+(10,'20230504','125478630','Coroa de flores',10,18);
+
+--Exercicio 1
+SELECT tbl_Cliente.Nomecl,tbl_Produto.NomePrd
+FROM tbl_Compra
+INNER JOIN tbl_Cliente
+	on tbl_Cliente.IdCliente = tbl_Compra.IdCliente
+INNER JOIN tbl_Produto
+	on tbl_Produto.IdProduto = tbl_Compra.IdProduto;
+
+-- Exercicio 2, no meu caso o primeiro ID é o 2
+SELECT tbl_Cliente.Nomecl,tbl_Cliente.Sobrenomecl,tbl_Produto.NomePrd
+FROM tbl_Compra
+INNER JOIN tbl_Cliente
+	on tbl_Cliente.IdCliente = tbl_Compra.IdCliente
+INNER JOIN tbl_Produto
+	on tbl_Produto.IdProduto = tbl_Compra.IdProduto
+WHERE tbl_Compra.IdCliente = 2;
+
+--Exercicio 3, no meu caso o ID 3 é o 4
+SELECT SUM (P.PrecoPrd*C.QtdComprado) AS 'Valor total'
+FROM tbl_Produto P
+INNER JOIN tbl_Compra C
+	on P.IdProduto = C.IdProduto
+WHERE C.IdCliente = 4;
+
+--Exercicio 4
+SELECT SUM (P.PrecoPrd*C.QtdComprado) AS 'Valor total'
+FROM tbl_Produto P
+INNER JOIN tbl_Compra C
+	on P.IdProduto = C.IdProduto;
+
+-- Exercicio 5
+SELECT SUM (P.PrecoPrd*C.QtdComprado) AS 'Valor total'
+FROM tbl_Produto P
+INNER JOIN tbl_Compra C
+	on P.IdProduto = C.IdProduto
+WHERE C.IdCompra = 8 OR C.IdCompra = 9;
+
+-- Exercicio 6
+SELECT P.NomePrd, SUM (P.PrecoPrd*C.QtdComprado) AS 'Valor total'
+FROM tbl_Produto P
+INNER JOIN tbl_Compra C
+	on P.IdProduto = C.IdProduto
+GROUP BY P.NomePrd;
+
+-- Exercicio 7
+SELECT SUM (P.PrecoPrd*C.QtdComprado) AS 'Valor total'
+FROM tbl_Produto P
+INNER JOIN tbl_Compra C
+	on P.IdProduto = C.IdProduto
+WHERE P.TipoPrd = 'Planta' AND C.DataCmp BETWEEN '20230317' AND '20230412';
+
+SELECT * FROM tbl_Cliente;
+SELECT * FROM tbl_Produto;
+SELECT * FROM tbl_Compra;
