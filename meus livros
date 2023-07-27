@@ -1,0 +1,767 @@
+-- Criar um banco de dados:
+CREATE DATABASE db_MeusLivros ON PRIMARY
+(NAME = db_MeusLivros,
+FILENAME = 'C:\SQL\db_MeusLivros.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = db_MeusLivros_log,
+FILENAME = 'C:\SQL\db_MeusLivros_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+
+-- Selecionar o banco de dados a ser usado
+USE db_MeusLivros;
+
+-- Criar a tabela de editoras
+CREATE TABLE tbl_editoras (
+IdEditora SMALLINT PRIMARY KEY IDENTITY ,
+NomeEditora VARCHAR(60) NOT NULL
+);
+
+-- Criar tabela de assuntos
+CREATE TABLE tbl_Assuntos (
+IdAssunto SMALLINT IDENTITY PRIMARY KEY,
+NomeAssunto VARCHAR(25) NOT NULL
+);
+
+CREATE TABLE tbl_autores(
+IdAutor SMALLINT IDENTITY PRIMARY KEY,
+NomeAutor Varchar(40),
+SobrenomeAutor VARCHAR (60)
+);
+
+CREATE TABLE tbl_livros (
+IdLivro SMALLINT IDENTITY(100,1) PRIMARY KEY,
+NomeLivro VARCHAR(80) NOT NULL,
+ISBN VARCHAR(13) UNIQUE,
+DataPub DATE,
+PrecoLivro MONEY,
+NumeroPaginas SMALLINT NOT NULL,
+IdEditora SMALLINT NOT NULL,
+IdAssunto SMALLINT NOT NULL,
+CONSTRAINT publica FOREIGN KEY (IdEditora)
+	REFERENCES tbl_editoras(IdEditora),
+CONSTRAINT pertence FOREIGN KEY (IdAssunto)
+	REFERENCES tbl_assuntos(IdAssunto)
+);
+
+-- Criar tabela associativa LivrosAutores
+CREATE TABLE tbl_livros_autores (
+IdLivro SMALLINT NOT NULL,
+IdAutor SMALLINT NOT NULL,
+CONSTRAINT chave_composta PRIMARY KEY(IdLivro,IdAutor),
+CONSTRAINT possui FOREIGN KEY (IdLivro)
+	REFERENCES tbl_livros(IdLivro) ON DELETE CASCADE,
+CONSTRAINT escreve FOREIGN KEY(IdAutor)
+	REFERENCES tbl_autores(IdAutor) ON DELETE CASCADE
+);
+
+DROP TABLE tbl_livros_autores;
+
+-- Verificar as estruturas das tabelas criadas:
+sp_help tbl_livros;
+sp_help tbl_livros_autores;
+sp_help tbl_autores;
+sp_help tbl_Assuntos;
+sp_help tbl_editoras;
+
+--Verificar os parametros do banco de dados criado:
+sp_helpdb db_MeusLivros;
+
+-- Inserção de registros: comando INSERT INTO
+-- Sintaxe:
+-- INSERT INTO (colunas) VALUES (valores);
+
+-- Ex: Cadastrar um autor na tabela de autores
+INSERT INTO tbl_autores (NomeAutor, SobrenomeAutor)
+VALUES ('Daniel', 'Barret');
+
+INSERT INTO tbl_autores (NomeAutor,SobrenomeAutor)
+VALUES ('Geralt','Carter');
+
+INSERT INTO tbl_autores (NomeAutor, SobrenomeAutor)
+VALUES
+('Mark','Sobell'),('William','Stanek'),('Richard','Blum'),('Christine','Bresnahan'),
+('Richard','Silverman'),('Robert','Byrnes'),('Jay','Ts'),('Robert','Eckstein'),
+('Paul','Horowitz'),('Winfield','Hill'),('Joel','Murach'),('Paul','Scherz'),('Simon','Monk');
+
+-- Cadastrar as editoras
+INSERT INTO tbl_editoras (NomeEditora)
+VALUES ('Prentice Hall'),('O´Reilly'),('Microsoft Press'),
+('Wiley'),('Mc Graw Hill'),('Bookman'),
+('Novatec'),('Apress'),('Sybex'),('Mike Murach and Associates');
+
+-- Cadastrar assuntos
+INSERT INTO tbl_Assuntos (NomeAssunto)
+VALUES ('Ficção Científica'),('Botânica'),('Eletrônica'),('Matemática'),('Aventura'),('Literatura'),('Informática'),('Suspense');
+
+INSERT INTO tbl_Assuntos (NomeAssunto)
+VALUES ('Negócios')
+
+-- Cadastrar um livro
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES
+('Linux Command Line and Shell Scripting','9781118983843','20150109',213.63,832,4,7);
+
+-- Inserir outro livro
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES
+('SSH, the Secure Shell','9780596008956','20050517',215.03,672,2,7);
+
+-- Exercicio de Fixação:
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES ('Using Samba', '9780596002565','20031221',158.51,449,2,7);
+
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES ('A Arte da Eletrônica','9788582604342','20170308',222.99, 1160,6,3),
+('Windows Server 2012 Inside Out', '9780735666313','20130125',179.51,1584,3,7),
+('Murach´s MySQL','9781943872367','20190501',227.64,650,10,7),
+('Practical Electronics for Inventors','9781259587542','20160711',502.02,1056,5,3);
+
+-- Exercicio cadastrar sua propria preferencia
+INSERT INTO tbl_autores (NomeAutor, SobrenomeAutor)
+VALUES ('Daniel','Wallace'),('Alex','Hirsch'),('Tom','Connellan');
+
+INSERT INTO tbl_editoras (NomeEditora)
+VALUES('Bertrand Brasil'),('Universo dos Livros'),('Benvirá');
+
+INSERT INTO tbl_Assuntos (NomeAssunto)
+VALUES('Ficção Científica'),('Ficção Científica'),('Negócios');
+
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES
+('O Livro dos Sith','9788528617931','20140110',81.99,160,11,10),
+('O Diário Perdido de Gravity falls','9788550303628','20200131',67.42,288,12,10),
+('Nos Bastidores da Disney','9788502102507','20101118',20.00,176,13,9);
+
+-- Cadastrar os registros na tabela assosciativa:
+INSERT INTO tbl_livros_autores (IdLivro, IdAutor)
+Values
+(100,5),(100,6),
+(101,1),(101,7),(101,8),
+(102,2),(102,9),(102,10),
+(103,11),(103,12),
+(104,4),
+(105,13),
+(106,14),(106,15);
+
+INSERT INTO tbl_livros_autores (IdLivro, IdAutor)
+Values
+(107,16),
+(108,17),
+(109,18);
+-- Alterar tabela
+UPDATE tbl_Assuntos
+SET NomeAssunto = 'Terror'
+Where IdAssunto = 11;
+
+UPDATE tbl_Assuntos
+SET NomeAssunto = 'Comédia'
+Where IdAssunto = 12;
+
+UPDATE tbl_autores
+SET NomeAutor = 'Gerald'
+Where IdAutor = 2;
+
+UPDATE tbl_livros
+SET NomeLivro = 'SSH, o Shell Seguro'
+Where IdLivro = 101;
+
+UPDATE tbl_livros
+SET PrecoLivro = PrecoLivro + 20.00
+Where IdLivro = 105;
+
+UPDATE tbl_Assuntos
+SET NomeAssunto = 'Química'
+Where IdAssunto = 8;
+
+INSERT INTO tbl_Assuntos(NomeAssunto)
+VALUES ('Suspense');
+
+-- Excluir registro
+INSERT INTO tbl_editoras(NomeEditora)
+VALUES ('Editora Scaladush')
+
+DELETE FROM tbl_editoras
+WHERE IdEditora = 14;
+
+INSERT INTO tbl_autores(NomeAutor, SobrenomeAutor)
+VALUES ('Stephen','King');
+
+INSERT INTO tbl_editoras(NomeEditora)
+VALUES ('Scribner');
+
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES ('It','978501182099','20170711',63.99,1184,15,11);
+
+DELETE FROM tbl_editoras
+WHERE IdEditora = 15;
+
+DELETE FROM tbl_livros
+WHERE IdLivro = 110;
+
+DELETE FROM tbl_autores
+WHERE IdAutor = 19;
+
+-- TRUNCATE TABLE apaga dados da tabela mas não a tabela
+
+-- Consulta simples em sql
+--Exemplo
+--SELECT* FROM tbl_assuntos;
+
+--SELECT NomeLivro
+--From tbl_livros;
+
+--SELECT NomeAutor, SobrenomeAutor
+--FROM tbl_autores;
+
+SELECT * FROM tbl_Assuntos;
+
+SELECT NomeLivro
+From tbl_livros;
+
+SELECT NomeAutor, SobrenomeAutor
+FROM tbl_autores;
+
+SELECT NomeLivro, PrecoLivro,NumeroPaginas
+FROM tbl_livros;
+
+SELECT NomeEditora
+FROM tbl_editoras;
+
+SELECT IdAutor, SobrenomeAutor
+FROM tbl_autores;
+
+--Ordenação de resultados em consultas
+-- Cláusula ORDER BY
+SELECT NomeEditora
+FROM tbl_editoras
+ORDER BY NomeEditora;
+
+
+SELECT * FROM tbl_livros
+ORDER BY PrecoLivro;
+
+SELECT NomeLivro, Precolivro, NumeroPaginas
+FROM tbl_livros
+ORDER BY NumeroPaginas DESC; --DESC= Comando para ordem descendente
+
+UPDATE tbl_livros
+SET NomeLivro = 'O Diário Perdido de Gravity Falls'
+Where IdLivro = 108;
+
+UPDATE tbl_livros
+SET NumeroPaginas= 1584
+Where IdLivro = 104;
+
+SELECT NomeLivro, DataPub, IdAssunto FROM tbl_livros ORDER BY IdAssunto, NomeLivro; --Ordenação em níveis
+
+SELECT NomeEditora
+FROM tbl_editoras
+ORDER BY NomeEditora
+
+SELECT NomeLivro, Precolivro, DataPub
+FROM tbl_livros
+ORDER BY DataPub DESC;
+
+SELECT NomeAutor, SobrenomeAutor
+FROM tbl_autores
+ORDER BY SobrenomeAutor;
+
+SELECT NomeLivro, IdAssunto, IdEditora
+FROM tbl_livros;
+
+
+
+SELECT NomeAssunto FROM tbl_Assuntos ORDER BY NomeAssunto;
+
+-- Filtros de Registros
+-- Cláusula WHERE
+
+SELECT NomeLivro, DataPub
+FROM tbl_livros
+WHERE IdEditora = 2;
+
+SELECT idAutor, NomeAutor FROM tbl_autores WHERE SobrenomeAutor = 'Wallace';
+
+-- Filtros com operadores lógicos
+-- E(AND), OU(OR) e NAO(NOT)
+SELECT IdLivro, NomeLivro, IdEditora
+FROM tbl_livros
+WHERE IdLivro > 103 OR IdEditora < 4;
+
+SELECT IdLivro, NomeLivro, IdEditora
+FROM tbl_livros
+WHERE IdLivro > 103 AND IdEditora < 4;
+
+SELECT IdLivro, NomeLivro, IdEditora
+FROM tbl_livros
+WHERE NOT IdEditora = 10;
+
+SELECT NomeEditora FROM tbl_editoras WHERE IdEditora = 2;
+
+SELECT NomeLivro, PrecoLivro, DataPub
+FROM tbl_livros
+WHERE IdEditora = 2
+ORDER BY DataPub;
+
+SELECT NomeAutor, SobrenomeAutor
+FROM tbl_autores
+WHERE NOT IdAutor = 4;
+
+SELECT IdAssunto
+FROM tbl_Assuntos
+WHERE NomeAssunto = 'Eletrônica';
+
+SELECT NomeLivro, IdAssunto, IdEditora
+FROM tbl_livros
+WHERE IdAssunto = 3;
+
+SELECT DataPub
+FROM tbl_livros
+WHERE NomeLivro = 'Using Samba';
+
+SELECT PrecoLivro
+FROM tbl_livros
+WHERE NomeLivro = 'SSH, o Shell Seguro';
+
+--Alieases com cláusula AS
+-- "Nome Alternativo" para cpçimas e tabelas
+-- O AS é opcional desde que não haja virgula entre a coluna e o alias
+SELECT NomeLivro AS Livro
+FROM tbl_livros;
+
+SELECT NomeAutor AS Nome, SobrenomeAutor AS Sobrenome
+FROM tbl_autores AS Autores;
+
+SELECT NomeLivro Livro, PrecoLivro 'Preço do Livro'
+FROM tbl_livros Livros
+ORDER BY PrecoLivro DESC;
+
+INSERT INTO tbl_Assuntos(NomeAssunto)
+VALUES('Ciências Sociais'),('Ciências'),('Historia da Arte');
+
+INSERT INTO tbl_editoras(NomeEditora)
+VALUES ('Record'),('Companhia de Bolso');
+
+INSERT INTO tbl_autores(NomeAutor,SobrenomeAutor)
+VALUES ('Umberto','Eco'),('Carl','Sagan');
+
+INSERT INTO tbl_livros_autores (IdLivro, IdAutor)
+Values (111,20),(112,21),(113,20);
+
+INSERT INTO tbl_livros (NomeLivro,ISBN,DataPub,PrecoLivro,NumeroPaginas,IdEditora,IdAssunto)
+VALUES('O Fascismo Eterno','9788501116154','20181010',24.20,64,16,14),
+('Bilhões e Bilhões','9788535911947','20080325',29.90,288,17,15),
+('História da Beleza','9788501090881','20100930',190.00,440,16,16);
+
+SELECT NomeLivro AS Livros
+FROM tbl_livros
+WHERE IdAssunto = 7 AND PrecoLivro > 95.00;
+
+SELECT NomeLivro AS Livros
+FROM tbl_livros
+WHERE IdAssunto = 7 OR IdAssunto = 11
+ORDER BY Livros;
+
+SELECT NomeLivro AS Livros, PrecoLivro AS 'Preço do Livro'
+FROM tbl_livros
+WHERE IdEditora > 2 AND PrecoLivro < 80.00
+ORDER BY PrecoLivro;
+
+SELECT NomeLivro AS Livros,ISBN, PrecoLivro AS 'Preço do Livro', DataPub AS 'Data de Publicação'
+FROM tbl_livros
+WHERE DataPub <'20100101' AND DataPub>'20050101'
+ORDER BY DataPub;
+
+-- Funções de Agregação
+--Trata-se de funções ue permitem aplicar determinados cálculos sobre os valores presentes em uma coluna
+--Retornam sempre um ÚNICO valor de resultado.
+
+--São elas: MAX, MIN, SUM, AVG, e COUNT, o * signfica conte tudo
+SELECT COUNT(*) AS Total
+FROM tbl_autores;
+
+SELECT COUNT(IdEditora)
+FROM tbl_editoras;
+
+-- Contagem de linhas de repetição: DISTINCT
+SELECT COUNT(DISTINCT IdEditora)
+FROM tbl_livros;
+
+-- Valor maximo em uma coluna numerica
+SELECT MAX(PrecoLivro) AS 'Valor maximo'
+FROM tbl_livros;
+-- Valor minimo em uma coluna numerica
+SELECT MIN(PrecoLivro) AS 'Valor minimo'
+FROM tbl_livros;
+-- Somatorio dos valores em uma coluna numerica
+SELECT SUM(PrecoLivro) AS 'Valor total'
+FROM tbl_livros;
+--Media aritimetica "na unha"
+SELECT SUM(PrecoLivro) / COUNT(*) AS Media
+FROM tbl_livros;
+--Media aritmetica com função agregada AVG("AVERAGE")
+SELECT AVG(PrecoLivro) AS Media
+FROM tbl_livros;
+--Varias funções na mesma consulta
+SELECT
+	COUNT(*) AS 'Quant. Livros',
+	SUM(NumeroPaginas) AS 'Total de paginas',
+	AVG(NumeroPaginas) AS 'Média de Paginas',
+	SUM(PrecoLivro) AS Total
+FROM tbl_livros;
+
+SELECT SUM(PrecoLivro)
+FROM tbl_livros
+WHERE IdEditora = 3;
+
+SELECT AVG(PrecoLivro)
+FROM tbl_livros
+WHERE IdEditora = 2 or IdEditora = 3;
+-- Consulta com subconsulta (subquery)
+SELECT NomeLivro, PrecoLivro
+FROM tbl_livros
+WHERE PrecoLivro = (
+	SELECT MAX(PrecoLivro)
+	FROM tbl_livros
+);
+--Intervalos em consultas: cláusula BETWEEN
+
+--Livros com data de publicação em um intervalor
+SELECT * FROM tbl_livros
+WHERE DataPub BETWEEN '20030102'AND '20110913';
+
+SELECT NomeLivro As Livro, PrecoLivro as PREÇO
+FROM tbl_livros
+WHERE PrecoLivro BETWEEN 150.00 AND 200.00;
+
+--Retornar dados de duas faixas de valores ao mesmo tempo:
+SELECT NomeLivro, PrecoLivro
+FROM tbl_livros
+WHERE PrecoLivro BETWEEN 150.00 AND 180.00
+OR PrecoLivro BETWEEN 220.00 AND 300.00
+ORDER BY PrecoLivro;
+
+-- DIMINUIR VALOR EM 15%
+
+UPDATE tbl_livros
+SET PrecoLivro = PrecoLivro * 0.85
+WHERE DataPub BETWEEN '20010101' AND '20091115';
+
+SELECT * FROM tbl_livros
+WHERE DataPub BETWEEN '20010101'AND '20091115';
+
+-- Cláusula LIKE: correspondência de padrões
+-- Usa metacarcteres na construção dos filtros:
+--'%': Qualquer cadeia de 0ou mais caracteres
+--'_': Um caractere
+-- Retornar livros que iniciaM com letra A
+SELECT * FROM tbl_livros
+WHERE NomeLivro LIKE 'A%';
+
+-- Retornar livros que não iniciam com letra S
+
+SELECT * FROM tbl_livros
+WHERE NomeLivro NOT LIKE 'S%';
+
+-- Retornar livros que a segunda letra é I
+SELECT * FROM tbl_livros
+WHERE NomeLivro LIKE '_i%';
+
+--Cláusula GROUP BY
+-- Agrupa registros em subgrupos de acordo com valores
+--retornados por uma expressão
+
+--Mostrar o total de páginas dos livros agrupados por assunto.
+SELECT IdAssunto, SUM(NumeroPaginas) AS Paginas
+FROM tbl_livros
+GROUP BY IdAssunto;
+
+-- Mostrar total de preços dos livros de acordo com as editoras
+SELECT IdEditora, SUM(PrecoLivro) AS Preços
+FROM tbl_livros
+WHERE NumeroPaginas >= 1000
+GROUP BY IdEditora;
+
+-- Cláusula INNER JOIN ("junção interna")
+SELECT tbl_livros.NomeLivro,tbl_editoras.NomeEditora
+FROM tbl_livros
+INNER JOIN tbl_editoras
+	ON tbl_livros.IdEditora = tbl_editoras.IdEditora;
+
+SELECT tbl_livros.NomeLivro,tbl_livros.ISBN,tbl_Assuntos.NomeAssunto
+FROM tbl_livros
+INNER JOIN tbl_Assuntos
+	ON tbl_livros.IdAssunto = tbl_Assuntos.IdAssunto;
+
+SELECT L.NomeLivro AS Livro, E.NomeEditora AS Editora
+FROM tbl_livros AS L
+INNER JOIN tbl_editoras AS E
+	ON L.IdEditora = E.IdEditora
+WHERE E.NomeEditora LIKE 'M%';
+
+SELECT tbl_livros.NomeLivro as Livro, tbl_autores.NomeAutor as Autor
+from tbl_livros_autores LA
+inner join tbl_livros
+	on tbl_livros.IdLivro = LA.IdLivro
+INNER JOIN tbl_autores
+	ON tbl_autores.IdAutor = LA.IdAutor;
+
+-- Inner join com subconsulta
+SELECT L.NomeLivro, A.NomeAutor, A.SobrenomeAutor, L.PrecoLivro
+FROM tbl_livros_autores LA
+INNER JOIN tbl_livros L
+	ON L.IdLivro = LA.IdLivro
+INNER JOIN tbl_autores A
+	ON A.IdAutor = LA.IdAutor
+WHERE L.PrecoLivro >= (
+	SELECT AVG (PrecoLivro)
+	FROM tbl_livros
+);
+
+-- Comentario em multiplas linhas */
+
+-- Views
+
+-- Stored Procedures / Procedimentos Armazenados
+
+CREATE VIEW VW_Livros_Editoras 
+as
+SELECT L.NomeLivro, L.PrecoLivro, E.NomeEditora
+FROM tbl_livros L
+inner join tbl_editoras E
+	on L.IdEditora = E.IdEditora;
+
+-- Excluir uma VIEW
+DROP VIEW VW_Livros_Editoras;
+
+-- Usar a VIEW
+SELECT NomeLivro, NomeEditora
+FROM VW_Livros_Editoras
+WHERE NomeLivro like 'S%';
+
+-- Alteração de VIEW: declaração ALTER VIEW
+ALTER VIEW VW_Livros_Editoras
+as
+SELECT L.NomeLivro, L.PrecoLivro, L.NumeroPaginas, E.NomeEditora
+FROM tbl_livros L
+inner join tbl_editoras E
+	on L.IdEditora = E.IdEditora;
+
+-- Exercio 1: Cri uma exibição que, ao ser consultada, retorne nome de livros, editoras e de assuntos.
+CREATE VIEW Acervo 
+as
+SELECT L.NomeLivro, A.NomeAssunto, E.NomeEditora
+FROM tbl_livros L
+inner join tbl_editoras E
+	on L.IdEditora = E.IdEditora
+inner join tbl_Assuntos A
+	ON L.IdAssunto = A.IdAssunto;
+
+SELECT NomeLivro, NomeAssunto, NomeEditora
+FROM Acervo;
+
+-- Exercio 2: Logo após altere a view anterior para que retorne também nome e sobrenome dos autores dos livros.
+ALTER VIEW Acervo
+as
+SELECT L.NomeLivro, A.NomeAssunto, E.NomeEditora, T.NomeAutor, T.SobrenomeAutor
+FROM tbl_livros L
+inner join tbl_editoras E
+	on L.IdEditora = E.IdEditora
+inner join tbl_Assuntos A
+	ON L.IdAssunto = A.IdAssunto
+inner join tbl_livros_autores LA
+	on L.IdLivro = LA.IdLivro
+INNER JOIN tbl_autores T
+	ON LA.IdAutor = T.IdAutor;
+
+SELECT NomeLivro, NomeAssunto, NomeEditora, NomeAutor, SobrenomeAutor
+FROM Acervo;
+
+--Exercicio 3: Efetue uma consulta à exibição criada que retorne a lista de livros ordenada por sobrenome de autor, em ordem alfabética.
+SELECT NomeLivro, NomeAssunto, NomeEditora, NomeAutor, SobrenomeAutor
+FROM Acervo
+ORDER BY SobrenomeAutor;
+
+--Backup so banco de dados
+BACKUP DATABASE db_MeusLivros
+TO DISK = 'C:\SQL\db_MeusLivros.bak';
+GO
+
+-- Restaurar Backup:
+RESTORE DATABASE db_MeusLivros
+FROM DISK ='C:\SQL\db_MeusLivros.bak'
+WITH REPLACE;
+
+-- Stored Procedures / Procedimentos armazenados
+-- Bloco de codigo que contem logica e fica armazenado em um banco de dados, podendo ser executado quando houver a necessidade.
+-- Sintaxe:
+--CREATE PROCEDURE nome_procedimento (colocar sp para identificar)
+--		(@parâmetros tipo_dado)
+--AS
+--		Bloco de codigos;
+
+-- Criar o procedimeto:
+CREATE PROCEDURE sp_teste
+as
+SELECT 'Bóson Treinamentos' AS Nome;
+
+EXEC sp_teste;
+
+CREATE PROCEDURE sp_LivroValor
+AS 
+SELECT NomeLivro Livro, PrecoLivro Preço
+FROM tbl_livros;
+
+EXEC sp_LivroValor;
+
+/* Visualizar ontudo da SP
+Usamos o procedimento armazenado sp_helptext para extrair o conteudo de texto de uma stored procedure:
+EXEC sp_helptext nome_proceditmento
+*/
+-- exemplo:
+EXEC sp_helptext sp_LivroValor;
+
+-- Exluir procedimento armazenado
+--DROP PROCEDURE nome_procedimento;
+
+-- Exemplo usando parametro de entrada (variavel)
+CREATE PROCEDURE sp_livro_editora
+		@NomeEditora VARCHAR(40)
+as
+BEGIN
+	SET NOCOUNT ON;
+	SELECT DISTINCT L.NomeLivro, E.NomeEditora
+	FROM tbl_livros L
+	INNER JOIN tbl_editoras E
+		on L.IdEditora = E.IdEditora
+	WHERE E.NomeEditora = @NomeEditora;
+
+END;
+GO
+
+EXEC sp_livro_editora 'O´Reilly';
+
+--Exemplo
+CREATE PROCEDURE sp_Livro_Valor
+(@ID SMALLINT)
+AS
+BEGIN
+		SELECT NomeLivro as Livro, PrecoLivro as Preço
+		FROM tbl_livros
+		WHERE IdLivro = @ID
+END;
+GO
+--Testar:
+EXEC sp_Livro_Valor 104;
+
+-- Alterar procedimentos armazenados: ALTER PROCEDURE
+/*Sintaxe
+ALTER PROCEDURE nome_procedimento
+		novo código do sp;
+*/
+-- Exercicio
+CREATE PROCEDURE sp_exercicio
+		@Tema VARCHAR(40)
+as
+BEGIN
+	SET NOCOUNT ON;
+	SELECT DISTINCT L.NomeLivro, L.ISBN, A.NomeAssunto
+	FROM tbl_livros L
+	INNER JOIN tbl_Assuntos A
+		on L.IdAssunto = A.IdAssunto
+	WHERE A.NomeAssunto = @Tema;
+
+END;
+GO
+EXEC sp_exercicio 'Ficção Científica';
+
+-- trigger after
+CREATE TRIGGER teste_trigger_after
+ON tbl_editoras
+AFTER INSERT
+AS
+PRINT 'Editora inserida!';
+
+INSERT INTO tbl_editoras
+VALUES ('Editora 1');
+
+DROP TRIGGER teste_trigger_after;
+-- TRIGGER AFTER COM TABELA
+CREATE TRIGGER tirgger_editora_autor
+ON tbl_editoras
+AFTER INSERT
+AS
+INSERT INTO tbl_autores VALUES ('José','da Silva');
+
+INSERT INTO tbl_editoras
+VALUES ('Editora 1');
+
+DELETE FROM tbl_editoras
+WHERE IdEditora = 19;
+
+-- Ex1
+CREATE TRIGGER trigger_delete_teste
+ON tbl_editoras
+AFTER DELETE
+AS
+PRINT 'Registro excluido com sucesso!';
+
+DELETE FROM tbl_editoras
+WHERE IdEditora = 18;
+
+/*ALTER TABLE nome_tabela
+ENABLE/DISABLE TRIGGER nome_trigger */
+--Testando desabilitando
+ALTER TABLE tbl_editoras
+DISABLE TRIGGER tirgger_editora_autor;
+--Testando habilitando
+ALTER TABLE tbl_editoras
+ENABLE TRIGGER tirgger_editora_autor;
+
+/* VERFICANDO A EXISTENCIA DE TRIGGER:
+Em uma tabela especifica:
+EXEC sp_helptrigger @tabname=Nome_Tabela
+Exemplo:
+EXEC sp_helptrigger @tabname=tbl_editoras;
+No banco de dado atual todo:*/
+EXEC sp_helptrigger @tabname=tbl_editoras;
+SELECT * FROM sys.triggers
+WHERE is_disabled = 0 OR is_disabled = 1;
+
+-- Operador IN
+SELECT * FROM tbl_livros
+WHERE IdEditora IN (1,2,5);
+
+SELECT L.NomeLivro, A.NomeAssunto
+FROM tbl_livros L JOIN tbl_Assuntos A
+ON L.IdAssunto = A.IdAssunto
+WHERE A.NomeAssunto IN ('Ficção Científica', 'Eletrônica', 'Negócios');
+
+-- Exemplo NOT IN
+SELECT NomeLivro, DataPub, IdEditora
+FROM tbl_livros
+WHERE IdEditora NOT IN (2,4);
+
+--Exercicio
+SELECT L.NomeLivro, A.NomeAutor
+FROM tbl_livros L
+	INNER JOIN tbl_livros_autores LA
+	ON L.IdLivro = LA.IdLivro
+	INNER JOIN tbl_autores A
+	ON A.IdAutor = LA.IdAutor
+	INNER JOIN tbl_editoras E
+	ON L.IdEditora = E.IdEditora
+WHERE E.NomeEditora IN ('Wiley', 'Microsoft Press','Bookman');
+
+-- Verificar se dado foi inserido com sucesso:
+SELECT * FROM tbl_Assuntos;
+SELECT * FROM tbl_autores;
+SELECT * FROM tbl_editoras;
+SELECT * FROM tbl_livros;
+SELECT * FROM tbl_livros_autores;
