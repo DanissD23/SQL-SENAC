@@ -1,0 +1,69 @@
+CREATE DATABASE Maruchan ON PRIMARY
+(NAME = Maruchan,
+FILENAME = 'C:\SQL\Maruchan.mdf',
+SIZE = 6MB,
+MAXSIZE = 15MB,
+FILEGROWTH = 10%)
+LOG ON (
+NAME = Banco_Maruchan_log,
+FILENAME = 'C:\SQL\Maruchan_log.ldf',
+SIZE = 1MB,
+FILEGROWTH = 1MB
+)
+GO
+Use Maruchan;
+
+CREATE TABLE tbl_Funcionario (
+IdFunc SMALLINT PRIMARY KEY IDENTITY,
+nomefunc VARCHAR (10) NOT NULL,
+sobrefunc VARCHAR (20) NOT NULL,
+funclog VARCHAR (10) NOT NULL,
+senhafunc VARCHAR (10)
+);
+
+CREATE TABLE tbl_cliente (
+IDclient SMALLINT PRIMARY KEY IDENTITY,
+nomecli VARCHAR (10) NOT NULL,
+sobrecli VARCHAR (20) NOT NULL,
+datanasc DATE,
+telcliente VARCHAR (20) NOT NULL,
+emailcli VARCHAR(50),
+);
+
+ALTER TABLE tbl_cliente 
+ADD documento VARCHAR (10) NOT NULL
+;
+
+CREATE TABLE tbl_viagem (
+IDviagem SMALLINT PRIMARY KEY IDENTITY,
+destinovi VARCHAR (20) NOT NULL,
+ida DATE,
+volta DATE,
+);
+
+CREATE TABLE tbl_func_cliente(
+IdFunc SMALLINT NOT NULL,
+IDclient SMALLINT NOT NULL,
+CONSTRAINT chavefk PRIMARY KEY (IdFunc, IDclient),
+CONSTRAINT guia FOREIGN KEY (IdFunc)
+	REFERENCES tbl_Funcionario (IdFunc) ON DELETE CASCADE,
+CONSTRAINT segue FOREIGN KEY (IDclient)
+	REFERENCES tbl_cliente (IDclient) ON DELETE CASCADE
+);
+
+CREATE TABLE tbl_cliente_viagem (
+IDclient SMALLINT NOT NULL,
+IDviagem SMALLINT NOT NULL,
+CONSTRAINT fkekey PRIMARY KEY (IDclient, IDviagem),
+CONSTRAINT vai FOREIGN KEY (IDclient)
+	REFERENCES tbl_cliente (IDclient) ON DELETE CASCADE,
+CONSTRAINT visitado FOREIGN KEY (IDviagem)
+	REFERENCES tbl_viagem (IDviagem) ON DELETE CASCADE
+);
+
+
+select * from tbl_Funcionario;
+SELECT * FROM tbl_cliente;
+select * from tbl_viagem;
+select * from tbl_cliente_viagem;
+select * from tbl_func_cliente;
