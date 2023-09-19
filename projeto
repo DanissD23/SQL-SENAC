@@ -61,6 +61,18 @@ CONSTRAINT visitado FOREIGN KEY (IDviagem)
 	REFERENCES tbl_viagem (IDviagem) ON DELETE CASCADE
 );
 
+INSERT INTO tbl_cliente(nomecli,sobrecli,datanasc,telcliente,emailcli,documento)
+VALUES ('Darth','Vader','19910512','11987456321','darthvader@email.com.br','75841263'),('Luke','Skywalker','19980611','11258476784','lukeskywalker@email.com.br','12457896'),
+('Mickey','Mouse','19710830','11964785201','mickey@email.com.br','96321054'),('Donald','Duck','19800413','11978520145','donald@email.com.br','21458741'),
+('Luffy','Monkey D','19970605','11956210348','luffy@email.com.br','50214584'),('Roronoa','Zoro','19960710','11945871235','zoro@email.com.br','63201458'),
+('Peter','Parker','19900611','11947852013','peter@email.com.br','78451200'),('Tony','Stark','19701201','11944257001','tony@email.com.br','12456302'),
+('Ichigo','Kurosaki','19960318','11977845210','kurosaki@email.com.br','56478451'),('Kiragaya','Kazuto','20010419','11985421021','kirito@email.com.br','14785452');
+
+INSERT INTO tbl_Funcionario
+VALUES('Daniel','Filho','Jedi','123456'),('Rafael','Felizardo','Zelda','456789'),('William','Guariento','Naruto','789123');
+
+INSERT INTO tbl_viagem
+VALUES ('Disney Orlando','20231110','20231125'),('Nassau Caribe','20231210','20231225'),('Natal','20231228','20240103');
 
 select * from tbl_Funcionario;
 SELECT * FROM tbl_cliente;
