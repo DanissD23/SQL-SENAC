@@ -18,7 +18,7 @@ IdFunc SMALLINT PRIMARY KEY IDENTITY,
 nomefunc VARCHAR (10) NOT NULL,
 sobrefunc VARCHAR (20) NOT NULL,
 funclog VARCHAR (10) NOT NULL,
-senhafunc VARCHAR (10)
+senhafunc VARCHAR (255)
 );
 
 CREATE TABLE tbl_cliente (
