@@ -61,6 +61,16 @@ CONSTRAINT visitado FOREIGN KEY (IDviagem)
 	REFERENCES tbl_viagem (IDviagem) ON DELETE CASCADE
 );
 
+CREATE TABLE tbl_guia_viagem (
+IdFunc SMALLINT NOT NULL,
+IDviagem SMALLINT NOT NULL,
+CONSTRAINT fkchave PRIMARY KEY (IdFunc, IDviagem),
+CONSTRAINT administra FOREIGN KEY (IdFunc)
+	REFERENCES tbl_Funcionario (IdFunc) ON DELETE CASCADE,
+CONSTRAINT coordenada FOREIGN KEY (IDviagem)
+	REFERENCES tbl_viagem (IDviagem) ON DELETE CASCADE
+);
+
 INSERT INTO tbl_cliente(nomecli,sobrecli,datanasc,telcliente,emailcli,documento)
 VALUES ('Darth','Vader','19910512','11987456321','darthvader@email.com.br','75841263'),('Luke','Skywalker','19980611','11258476784','lukeskywalker@email.com.br','12457896'),
 ('Mickey','Mouse','19710830','11964785201','mickey@email.com.br','96321054'),('Donald','Duck','19800413','11978520145','donald@email.com.br','21458741'),
@@ -74,8 +84,22 @@ VALUES('Daniel','Filho','Jedi','123456'),('Rafael','Felizardo','Zelda','456789')
 INSERT INTO tbl_viagem
 VALUES ('Disney Orlando','20231110','20231125'),('Nassau Caribe','20231210','20231225'),('Natal','20231228','20240103');
 
+INSERT INTO tbl_cliente_viagem (IDclient,IDviagem)
+VALUES (1,1),(2,1),(3,1),(4,1),(5,1),
+(6,2),(7,2),(8,2),
+(9,3),(10,3),(1,3),(2,3),(3,3);
+
+INSERT INTO tbl_func_cliente( IdFunc,IDclient)
+VALUES (1,1),(1,2),(1,3),(1,4),(1,5),
+(2,6),(2,7),(2,8),
+(3,9),(3,10),(3,1),(3,2),(3,3);
+
+INSERT INTO tbl_guia_viagem (IdFunc,IDviagem)
+VALUES (1,1),(2,2),(3,3);
+
 select * from tbl_Funcionario;
 SELECT * FROM tbl_cliente;
 select * from tbl_viagem;
 select * from tbl_cliente_viagem;
 select * from tbl_func_cliente;
+SELECT * FROM tbl_guia_viagem;
