@@ -1,17 +1,17 @@
-CREATE DATABASE Maruchan ON PRIMARY
-(NAME = Maruchan,
-FILENAME = 'C:\SQL\Maruchan.mdf',
+CREATE DATABASE db_Maruchan ON PRIMARY
+(NAME = db_Maruchan,
+FILENAME = 'C:\SQL\db_Maruchan.mdf',
 SIZE = 6MB,
 MAXSIZE = 15MB,
 FILEGROWTH = 10%)
 LOG ON (
-NAME = Banco_Maruchan_log,
-FILENAME = 'C:\SQL\Maruchan_log.ldf',
+NAME = Banco_db_Maruchan_log,
+FILENAME = 'C:\SQL\db_Maruchan_log.ldf',
 SIZE = 1MB,
 FILEGROWTH = 1MB
 )
 GO
-Use Maruchan;
+Use db_Maruchan;
 
 CREATE TABLE tbl_Funcionario (
 IdFunc SMALLINT PRIMARY KEY IDENTITY,
@@ -28,11 +28,9 @@ sobrecli VARCHAR (20) NOT NULL,
 datanasc DATE,
 telcliente VARCHAR (20) NOT NULL,
 emailcli VARCHAR(50),
+documento VARCHAR (10) NOT NULL
 );
 
-ALTER TABLE tbl_cliente 
-ADD documento VARCHAR (10) NOT NULL
-;
 
 CREATE TABLE tbl_viagem (
 IDviagem SMALLINT PRIMARY KEY IDENTITY,
@@ -79,23 +77,59 @@ VALUES ('Darth','Vader','19910512','11987456321','darthvader@email.com.br','7584
 ('Ichigo','Kurosaki','19960318','11977845210','kurosaki@email.com.br','56478451'),('Kiragaya','Kazuto','20010419','11985421021','kirito@email.com.br','14785452');
 
 INSERT INTO tbl_Funcionario
-VALUES('Daniel','Filho','Jedi','123456'),('Rafael','Felizardo','Zelda','456789'),('William','Guariento','Naruto','789123');
+VALUES('Daniel','Filho','Jedi','123456'),('Rafael','Silva
+','Zelda','456789'),('William','Guariento','Draken','789123');
 
 INSERT INTO tbl_viagem
-VALUES ('Disney Orlando','20231110','20231125'),('Nassau Caribe','20231210','20231225'),('Natal','20231228','20240103');
+VALUES ('Disney Orlando','20231110','20231125'),('Nassau Caribe','20231210','20231225'),('Tokyo','20231228','20240103');
 
 INSERT INTO tbl_cliente_viagem (IDclient,IDviagem)
 VALUES (1,1),(2,1),(3,1),(4,1),(5,1),
 (6,2),(7,2),(8,2),
-(9,3),(10,3),(1,3),(2,3),(3,3);
+(9,3),(10,3);
 
 INSERT INTO tbl_func_cliente( IdFunc,IDclient)
 VALUES (1,1),(1,2),(1,3),(1,4),(1,5),
 (2,6),(2,7),(2,8),
-(3,9),(3,10),(3,1),(3,2),(3,3);
+(3,9),(3,10);
+
+INSERT INTO tbl_func_cliente( IdFunc,IDclient)
+VALUES(2,16),(2,13),
+(3,14),(3,15), (3,12);
+
+INSERT INTO tbl_cliente_viagem (IDclient,IDviagem)
+VALUES(13,2),(16,2),
+(12,3),(14,3),(15,3);
 
 INSERT INTO tbl_guia_viagem (IdFunc,IDviagem)
 VALUES (1,1),(2,2),(3,3);
+
+INSERT INTO tbl_cliente(nomecli,sobrecli,datanasc,telcliente,emailcli,documento)
+VALUES ('Nico', 'Robin','19890512','11958479655','nicorobin@miguiwara.com.br','547881244'),('Tony Tony', 'Chopper', '20001204','11947851236','emailpoint@mugiwara.com','45758123'),
+('Hatbox','Ghost','19651013','11954711452','grommfamily@haunted.com','00134555'),('Pedro','D´Lara','19890619','11956478566','pedrinhogago@gmail.com.br','235845654'),
+('Corona','Virus','19900113','11956325477','pegouvoce@hotmail.com','235458866');
+
+DELETE FROM tbl_Funcionario WHERE IdFunc = 4;
+
+SELECT G.nomefunc, G.sobrefunc, D.destinovi
+FROM tbl_Funcionario G
+	INNER JOIN tbl_guia_viagem GD
+	ON G.IdFunc = GD.IDviagem
+	INNER JOIN tbl_viagem D
+	ON D.IDviagem = GD.IDviagem
+WHERE G.IdFunc = ;
+
+SELECT C.nomecli, C.sobrecli, C.datanasc, C.telcliente, C.emailcli,
+C.documento,D.destinovi
+FROM tbl_cliente C
+	INNER JOIN tbl_cliente_viagem CD
+	ON C.IDclient = CD.IDclient
+	INNER JOIN tbl_viagem D
+	ON D.IDviagem = CD.IDviagem
+WHERE C.IDclient = ;
+
+DELETE FROM tbl_cliente_viagem;
+DELETE FROM tbl_func_cliente;
 
 select * from tbl_Funcionario;
 SELECT * FROM tbl_cliente;
